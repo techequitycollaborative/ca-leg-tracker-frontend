@@ -16,6 +16,13 @@ export default function Home() {
     { headerName: 'Bill Number', field: 'bill_number'},
     { field: 'name' },
     { field: 'author' },
+    { field: 'status' },
+    { field: 'session' },
+    { headerName: 'Origin House Name', field: 'origin_house_name' },
+    { headerName: 'Committee Name', field: 'committee_name' },
+    { headerName: 'Committee Webpage', field: 'committee_webpage' },
+    { headerName: 'Committee House', field: 'committee_house' },
+    { headerName: 'Full Bill Text', field: 'full_text' },
     { field: 'notes', editable: true },
   ]);
 
