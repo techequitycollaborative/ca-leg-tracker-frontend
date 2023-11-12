@@ -1,7 +1,7 @@
 import {  pgSchema } from "drizzle-orm/pg-core";
 import { postgresConfig } from "../config";
 
-export const dbSchema = pgSchema(postgresConfig.DATABASE_SCHEMA ?? 'ca')
+export const dbSchema = pgSchema(postgresConfig.DATABASE_TABLE_SCHEMA ?? 'ca')
 
 export const connection = {
     user: postgresConfig.DATABASE_USER,

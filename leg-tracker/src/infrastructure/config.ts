@@ -13,7 +13,7 @@ export const postgresConfig = {
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_PORT: process.env.DATABASE_PORT,
-    DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
+    DATABASE_TABLE_SCHEMA: process.env.DATABASE_TABLE_SCHEMA,
     DATABASE_CA: process.env.DATABASE_CA,
   };
 
