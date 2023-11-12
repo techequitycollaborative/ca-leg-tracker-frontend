@@ -1,0 +1,4 @@
+{
+    "schema": "./src/infrastructure/driz/schema",
+    "out": "./src/infrastructure/driz/migrations"
+  }
