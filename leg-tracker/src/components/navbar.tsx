@@ -5,7 +5,7 @@ interface Props {
 
 const Navbar: NextPage<Props> = function Navbar(props) {
   return (
-    <div>
+    <div className="w-full bg-gray-300">
       <p>
         <span><a href=".">[LOGO]</a> | </span>
         <span><a href="./search">search bills</a> | </span>
