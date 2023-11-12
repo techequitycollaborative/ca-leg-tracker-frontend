@@ -13,6 +13,9 @@ export default function BillLayout({ children }: Props) {
       <p>bill header</p>
       <p>left side: content panel</p>
       <p>right side: discussion panel</p>
+
+
+      
     </div>
   );
 }
