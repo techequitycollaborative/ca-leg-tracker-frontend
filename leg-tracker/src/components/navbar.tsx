@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import Link from 'next/link';
 
 interface Props {
 }
@@ -7,13 +8,13 @@ const Navbar: NextPage<Props> = function Navbar(props) {
   return (
     <div className="w-full bg-gray-300">
       <p>
-        <span><a href=".">[LOGO]</a> | </span>
-        <span><a href="./search">search bills</a> | </span>
-        <span><a href="./dashboard">dashboard</a> | </span>
-        <span><a href="./calendar">calendar</a> | </span>
+        <span><Link href=".">[LOGO]</Link> | </span>
+        <span><Link href="/search">search bills</Link> | </span>
+        <span><Link href="/dashboard">dashboard</Link> | </span>
+        <span><Link href="/calendar">calendar</Link> | </span>
         <span>[DASHBOARD PICKER] | </span>
-        <span><a href="./settings">settings</a> | </span>
-        <span><a href="./login">logout</a> </span>
+        <span><Link href="/settings">settings</Link> | </span>
+        <span><Link href="/login">logout</Link> </span>
       </p>
     </div>
   );

@@ -2,22 +2,28 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Layout from '@/layouts/default'
 
-import { getBills } from '@/lib/get-bills';
+import ListNav from '@/components/list-nav'
+import ListItem from '@/components/list-item'
 
-import BillNav from '@/components/bill-nav'
-import BillListItem from '@/components/bill-list-item'
+import { IBillRepository } from "@/definitions/bill.repository"
+import { repositories } from "@/repositories/index"
 
-
-export default function Dashboard() {
+export default function Dashboard({ data }: any) {
   return (
     <Layout>
       <div>
-        <BillNav />
+        <ListNav />
         <div className="border-2 border-black p-4 m-4">
           <p>bill list</p>
-          {getBills(null, null).bills.map(
-            (x, i) => (
-              <p key={i} className="border-2 border-gray-300 p-2 m-2">{x.number}</p>
+          {data && data.map(
+            (x: any, i: any) => (
+              <div key={i}>
+                <ListItem
+                  billId={x.billId}
+                  billNumber={x.billNumber}
+                  billName={x.billName}
+                />
+              </div>
             )
           )}
         </div>
@@ -26,3 +32,11 @@ export default function Dashboard() {
   );
 };
 
+export async function getServerSideProps() {
+  const bills = await repositories.billRepository.list({limit:20}) as IBillRepository[] | null;
+  return {
+    props: {
+      data: bills,
+    },
+  };
+}
