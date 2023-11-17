@@ -24,13 +24,9 @@
       "@/layouts/*": ["layouts/*"],
       "@/styles/*": ["styles/*"],
       "@/lib/*": ["lib/*"],
-
-      "@/repositories/*": [
-        "/repositories/*"
-      ],
-      "@/infrastructure/*": [
-        "infrastructure/*"
-      ],
+      "@/repositories/*": ["repositories/*"],
+      "@/infrastructure/*": ["infrastructure/*"],
+      "@/definitions/*": ["definitions/*"],
     }
   },
   "plugins": [
