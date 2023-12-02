@@ -36,3 +36,17 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+## Architecture Notes
+- We are generally using a repository, integration, service, and domain approach. Business logic should be defined in these directories and initialized there. Definitions for each of these should be defined in the defintiions directory.  This allows us to swap out and rewrite bits and peices of the application as necessary.  e.g. someone wants to use typeorm they can write the repositories the expose the same methods and we don't have to rework any of the application pages... you get the idea.
+
+### Defintions
+- Defintions: Typescript interfaces and types that define the data structures, methods, and specific responses.  
+- Repositories: database table connections, getters, setters etc.
+- Integrations: vendor specific wrappers.  e.g. an email integration that is intialized with an email provider like sendgrid.
+- Services: grouped logic that might be used across domains. e.g. a notifier service that uses the email integration and a slack integration
+- Domains: logic grouped by related functionality.  e.g. an Auth domain might contain all the logic for managing authentication and authorization.
+
+## Environment
+- You must provide environmental variables in a .env.  Refer to the .env.example for the required variables.

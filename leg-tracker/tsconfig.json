@@ -20,21 +20,39 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/layouts/*": ["layouts/*"],
-      "@/styles/*": ["styles/*"],
-      "@/lib/*": ["lib/*"],
-      "@/repositories/*": ["repositories/*"],
-      "@/infrastructure/*": ["infrastructure/*"],
-      "@/definitions/*": ["definitions/*"],
-    }
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/layouts/*": [
+        "layouts/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/repositories/*": [
+        "repositories/*"
+      ],
+      "@/infrastructure/*": [
+        "infrastructure/*"
+      ],
+      "@/definitions/*": [
+        "definitions/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "plugins": [
     {
       "name": "next"
     }
   ],
-
   "include": [
     "next-env.d.ts",
     "**/*.ts",
