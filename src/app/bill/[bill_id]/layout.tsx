@@ -1,8 +1,8 @@
 import { repositories } from '@/repositories/index';
-import { PageProps } from '@/definitions/page.types.definitions';
+import { PageLayoutProps } from '@/definitions/page.types.definitions';
 import BillNav from '@/components/bill-nav';
 
-const Layout = async ({ params, children }: PageProps) => {
+const Layout = async ({ params, children }: PageLayoutProps) => {
   const { bill_id } = params;
   const bill = await repositories.billRepository.getById(bill_id);
   return (
