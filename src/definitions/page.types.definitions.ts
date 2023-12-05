@@ -8,5 +8,10 @@ export type TParams = {
 export interface PageProps {
   params: TParams;
   searchParams: TSearchParams;
+}
+
+export interface PageLayoutProps {
+  params: TParams;
+  searchParams: TSearchParams;
   children?: React.ReactNode;
 }
