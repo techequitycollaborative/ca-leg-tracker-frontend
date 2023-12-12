@@ -18,7 +18,11 @@ export default function RootLayout({
       <body>
         <Header />
         <Navbar />
-        <main className="w-full bg-gray-200 p-4">{children}</main>
+        <main className="w-full bg-gray-200 p-4">
+          <div className="max-w-screen-xl m-auto">
+            {children}
+          </div>
+        </main>
         <Footer />
       </body>
     </html>

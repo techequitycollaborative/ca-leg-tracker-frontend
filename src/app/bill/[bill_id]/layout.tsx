@@ -1,6 +1,6 @@
 import { repositories } from '@/repositories/index';
 import { PageLayoutProps } from '@/definitions/page.types.definitions';
-import BillNav from '@/components/bill-nav';
+import { Button } from '@/components/ui/button';
 
 const Layout = async ({ params, children }: PageLayoutProps) => {
   const { bill_id } = params;
@@ -8,19 +8,23 @@ const Layout = async ({ params, children }: PageLayoutProps) => {
   return (
     <>
       <div></div>
-      <div className="flex border-2 border-black p-4 m-4">
-        <p>
-          bill header ({bill?.billNumber}, {bill?.billName}, dashboard, link,
-          session)
-        </p>
-      </div>
-      <div className="flex border-2 border-black m-4">
-        <div className="w-1/2 p-4 bg-gray-400">
-          <BillNav />
-          <div className="border-2 border-black mt-4 p-2">{children}</div>
+      <div className="flex m-4">
+        <div>
+          <h2 className="text-xl"><span className="font-bold">{bill?.billNumber}</span> {bill?.billName}</h2>
+          <p>[bill link] | [session name]</p>
         </div>
-        <div className="w-1/2 p-4 bg-gray-300">
-          <p>Discussion panel</p>
+        <div className="ml-auto">
+          <p>Tracking in: [dashboard name]</p>
+        </div>
+      </div>
+      <div className="flex m-4">
+        <div className="w-1/2 pr-4">{children}</div>
+        <div className="w-1/2 py-4 px-8 bg-gray-300">
+          <h3 className="font-bold text-lg">Discussion</h3>
+          <p className="font-bold text-sm mt-6">Add a note:</p>
+          <textarea className="w-full my-2"></textarea>
+          <Button>Submit</Button>
+          <p className="mt-8">[previous comments]</p>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import ListNav from '@/components/list-nav';
-import ListItem from '@/components/list-item';
+import { DashboardListItem } from '@/components/list-item';
 
 import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
@@ -13,15 +13,23 @@ const Page = async ({}) => {
     <>
       <div>
         <ListNav />
-        <div className="border-2 border-black p-4 m-4">
-          <p>bill list</p>
+        <div className="m-2">
           {bills &&
             bills.map((x: any, i: any) => (
               <div key={i}>
-                <ListItem
+                <DashboardListItem
                   billId={x.billId}
                   billNumber={x.billNumber}
                   billName={x.billName}
+                  billCustomName="[user inputted bill name]"
+                  billLatest="[last update]"
+                  billUpcoming="[next sched]"
+                  billLastAction="[last action]"
+                  billSession="[session name]"
+                  billPosition="[org position]"
+                  billIssues="[issues]"
+                  billCommittee="[committee]"
+                  billLink="[leginfo link]"
                 />
               </div>
             ))}
