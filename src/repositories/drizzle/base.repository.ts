@@ -38,9 +38,6 @@ export  class BaseRepository<T> implements IBaseRepository<T> {
               console.log(e);
             })) as T[] | null;
 
-          console.log("HELLO");
-          console.log(itemsData);
-
           if (!itemsData || itemsData.length < 1) {
             return null;
           }

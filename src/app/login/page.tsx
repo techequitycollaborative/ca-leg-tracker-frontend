@@ -8,7 +8,6 @@ const Page = async ({}) => {
   const users = (await repositories.appUserRepository.list({ limit: 20 })) as
     | IAppUserRepository[]
     | null;
-
   return (
     <div>
       <h3 className="font-bold text-lg mb-2 mt-10 text-center">Select User</h3>

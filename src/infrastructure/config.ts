@@ -16,6 +16,3 @@ export const postgresConfig = {
     DATABASE_TABLE_SCHEMA: process.env.DATABASE_TABLE_SCHEMA,
     DATABASE_CA: process.env.DATABASE_CA,
   };
-
-  
-  console.log(postgresConfig.DATABASE_URL)

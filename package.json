@@ -14,9 +14,6 @@
     "@types/node": "18.15.10",
     "@types/react": "18.0.29",
     "@types/react-dom": "18.0.11",
-    "ag-grid": "^18.1.2",
-    "ag-grid-community": "^29.2.0",
-    "ag-grid-react": "^29.2.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.29.3",
@@ -35,9 +32,9 @@
     "typescript": "5.0.2"
   },
   "devDependencies": {
+    "@types/pg": "^8.10.9",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
-    "@types/pg": "^8.10.9"
+    "tailwindcss": "^3.3.5"
   }
 }
