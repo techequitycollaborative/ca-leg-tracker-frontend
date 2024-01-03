@@ -37,7 +37,7 @@ export  class BaseRepository<T> implements IBaseRepository<T> {
             .catch((e) => {
               console.log(e);
             })) as T[] | null;
-      
+
           if (!itemsData || itemsData.length < 1) {
             return null;
           }

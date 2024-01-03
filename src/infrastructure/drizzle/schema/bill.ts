@@ -8,7 +8,6 @@ import {
     text
   } from 'drizzle-orm/pg-core';
 import { dbSchema } from '../config';
-console.log(dbSchema);
 export const bill = dbSchema.table(
     'bill',
     {
