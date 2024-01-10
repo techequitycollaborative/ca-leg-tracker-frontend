@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 const Page = async ({ params }: PageProps) => {
   const { bill_id } = params;
   const bill = await repositories.billRepository.getById(bill_id);
+  const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));
+  const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
   return (
     <>
       <BillNav
@@ -40,19 +42,21 @@ const Page = async ({ params }: PageProps) => {
         <h3 className="font-bold text-lg">Schedule</h3>
         <div className="mt-2">
           <p className="font-bold">Upcoming</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
+          {billSchedule &&
+            billSchedule.map((x: any, i: any) => (
+              <div key={i}>
+                <p>{x.eventDate}: {x.eventText}</p>
+              </div>
+            ))}
         </div>
         <div className="mt-2">
           <p className="font-bold">History</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
-          <p>[date] [action]</p>
+          {billHistory &&
+            billHistory.map((x: any, i: any) => (
+              <div key={i}>
+                <p>{x.entryDate}: {x.entryText}</p>
+              </div>
+            ))}
         </div>
       </div>
     </>

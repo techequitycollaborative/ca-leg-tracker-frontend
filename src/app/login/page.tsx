@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button'
 
-import { IAppUserRepository } from '@/definitions/appuser.repository';
+import { IUserRepository } from '@/definitions/user.repository';
 import { repositories } from '@/repositories/index';
 
 const Page = async ({}) => {
-  const users = (await repositories.appUserRepository.list({ limit: 20 })) as
-    | IAppUserRepository[]
+  const users = (await repositories.userRepository.list({ limit: 20 })) as
+    | IUserRepository[]
     | null;
   return (
     <div>

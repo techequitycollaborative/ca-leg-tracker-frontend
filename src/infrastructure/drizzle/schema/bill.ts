@@ -13,17 +13,18 @@ export const bill = dbSchema.table(
     {
         billId: integer('bill_id').primaryKey(),
         billName: text('bill_name'),
-        billNumber: text('bill_number'), 
-        userName: text('user_name'),
-        fullText: text('full_text'), 
+        billNumber: text('bill_number'),
+        fullText: text('full_text'),
         author: text('author'),
+        coauthors: text('coauthors'),
         originChamberId: integer('origin_chamber_id'),
         committeeId: integer('committee_id'),
-        status: text('status'), 
-
+        status: text('status'),
+        leginfoLink: text('leginfo_link'),
+        legSession: text('leg_session'),
     }
 )
 
-  export type Bill = InferSelectModel<typeof bill>;
-  export type NewBill = InferInsertModel<typeof bill>;
-  export type PartialBill = Partial<Bill>;
+export type Bill = InferSelectModel<typeof bill>;
+export type NewBill = InferInsertModel<typeof bill>;
+export type PartialBill = Partial<Bill>;
