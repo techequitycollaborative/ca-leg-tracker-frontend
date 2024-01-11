@@ -5,10 +5,7 @@ import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
 
 const Page = async ({}) => {
-  const bills = (await repositories.billRepository.list({ limit: 20 })) as
-    | IBillRepository[]
-    | null;
-
+  const bills = await repositories.billRepository.billsWithContext();
   return (
     <>
       <div>
@@ -18,18 +15,18 @@ const Page = async ({}) => {
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <DashboardListItem
-                  billId={x.billId}
-                  billNumber={x.billNumber}
-                  billName={x.billName}
+                  billId={x.bill.billId}
+                  billNumber={x.bill.billNumber}
+                  billName={x.bill.billName}
                   billCustomName="[user inputted bill name]"
-                  billLatest="[last update]"
-                  billUpcoming="[next sched]"
+                  billLatest={x.bill_latest_actions.lastText}
+                  billUpcoming={x.bill_latest_actions.nextText}
                   billLastAction="[last action]"
-                  billSession="[session name]"
+                  billSession={x.bill.legSession}
                   billPosition="[org position]"
                   billIssues="[issues]"
                   billCommittee="[committee]"
-                  billLink="[leginfo link]"
+                  billLink={x.bill.leginfoLink}
                 />
               </div>
             ))}
