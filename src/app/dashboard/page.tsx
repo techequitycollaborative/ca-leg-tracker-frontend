@@ -5,7 +5,9 @@ import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
 
 const Page = async ({}) => {
-  const bills = await repositories.billRepository.billsWithContext();
+  const dashboardId = 1; // update to pull from session
+  const bills = await repositories.billRepository.listEnrichedBills(dashboardId);
+
   return (
     <>
       <div>
@@ -18,12 +20,12 @@ const Page = async ({}) => {
                   billId={x.bill.billId}
                   billNumber={x.bill.billNumber}
                   billName={x.bill.billName}
-                  billCustomName="[user inputted bill name]"
-                  billLatest={x.bill_latest_actions.lastText}
-                  billUpcoming={x.bill_latest_actions.nextText}
+                  billCustomName={x.billDetails == null ? x.bill.billName : x.billDetails.alternateName}
+                  billLatest={x.billLatest.lastText}
+                  billUpcoming={x.billLatest.nextText}
                   billLastAction="[last action]"
                   billSession={x.bill.legSession}
-                  billPosition="[org position]"
+                  billPosition={x.orgPosition == null ? "Unknown" : x.orgPosition.orgPositionName}
                   billIssues="[issues]"
                   billCommittee="[committee]"
                   billLink={x.bill.leginfoLink}

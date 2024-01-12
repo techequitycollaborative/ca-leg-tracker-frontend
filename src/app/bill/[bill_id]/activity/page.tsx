@@ -5,10 +5,14 @@ import ActionListItem from '@/components/action-list-item';
 import { Button } from '@/components/ui/button';
 
 const Page = async ({ params }: PageProps) => {
+  const dashboardId = 1; // update to pull from session
   const { bill_id } = params;
   const bill = await repositories.billRepository.getById(bill_id);
   const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));
   const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
+  const billActions = await repositories.billRepository.getBillActions(parseInt(bill_id), dashboardId);
+  console.log(billActions);
+
   return (
     <>
       <BillNav
