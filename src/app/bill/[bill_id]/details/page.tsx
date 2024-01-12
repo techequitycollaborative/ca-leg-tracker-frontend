@@ -7,6 +7,8 @@ const Page = async ({ params }: PageProps) => {
   const dashboardId = 1; // update to pull from session
   const { bill_id } = params;
   const bill = await repositories.billRepository.getEnrichedBillById(parseInt(bill_id), dashboardId);
+  const issues = await repositories.billRepository.getIssues(parseInt(bill_id), dashboardId);
+  const sponsors = await repositories.billRepository.getCommunitySponsors(parseInt(bill_id), dashboardId);
 
   return (
     <>
@@ -24,10 +26,20 @@ const Page = async ({ params }: PageProps) => {
         <p className="w-2/3">{bill?.orgPosition?.orgPositionName}</p>
 
         <p className="w-1/3 font-bold">Platform area:</p>
-        <p className="w-2/3">[issues]</p>
+        <p className="w-2/3">
+          {issues &&
+            issues.map((x: any, i: any) => (
+              <span key={i}>{(i > 0 ? " | " : "") + x.issue.issueName}</span>
+          ))}
+        </p>
 
         <p className="w-1/3 font-bold">Community sponsors:</p>
-        <p className="w-2/3">[sponsors]</p>
+        <p className="w-2/3">
+          {sponsors &&
+            sponsors.map((x: any, i: any) => (
+              <span key={i}>{(i > 0 ? " | " : "") + x.sponsor.communityOrgName}</span>
+          ))}
+        </p>
 
         <p className="w-1/3 font-bold">Political intel:</p>
         <p className="w-2/3">{bill?.billDetails?.politicalIntel}</p>

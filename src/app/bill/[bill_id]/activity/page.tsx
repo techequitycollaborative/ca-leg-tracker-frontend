@@ -11,7 +11,6 @@ const Page = async ({ params }: PageProps) => {
   const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));
   const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
   const billActions = await repositories.billRepository.getBillActions(parseInt(bill_id), dashboardId);
-  console.log(billActions);
 
   return (
     <>
@@ -24,22 +23,14 @@ const Page = async ({ params }: PageProps) => {
           <div className="ml-auto"><Button>Add new action</Button></div>
         </div>
         <div className="mt-4">
-          <ActionListItem
-            type="[action type]"
-            committee="[committee]"
-            status="[status]"
-            notes="[notes]"
-            due="[due date]"
-            link="[link]"
-          />
-          <ActionListItem
-            type="[action type]"
-            committee="[committee]"
-            status="[status]"
-            notes="[notes]"
-            due="[due date]"
-            link="[link]"
-          />
+          {billActions &&
+            billActions.map((x: any, i: any) => (
+              <ActionListItem
+                key={i}
+                date={x.user_action.date}
+                description={x.user_action.actionType}
+              />
+          ))}
         </div>
       </div>
       <div className="mt-4">

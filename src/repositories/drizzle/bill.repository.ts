@@ -4,12 +4,14 @@ import { billSchedule, BillSchedule } from "@/infrastructure/drizzle/schema/bill
 import { user, User } from "@/infrastructure/drizzle/schema/app-user";
 import { userAction, UserAction } from "@/infrastructure/drizzle/schema/user-action";
 import { discussionComment, DiscussionComment } from "@/infrastructure/drizzle/schema/discussion-comment";
-import { billLatestActions, BillLatestActions } from "@/infrastructure/drizzle/schema/bill-latest-actions";
+import { billLatestActions, BillLatestActions } from "@/infrastructure/drizzle/schema/views/bill-latest-actions";
 import { billDashboard, BillDashboard } from "@/infrastructure/drizzle/schema/bill-dashboard";
 import { billDetails, BillDetails } from "@/infrastructure/drizzle/schema/bill-details";
 import { orgPosition, OrgPosition } from "@/infrastructure/drizzle/schema/org-position";
 import { billIssue, BillIssue } from "@/infrastructure/drizzle/schema/bill-issue";
 import { issue, Issue } from "@/infrastructure/drizzle/schema/issue";
+import { billCommunitySponsor, BillCommunitySponsor } from "@/infrastructure/drizzle/schema/bill-community-sponsor";
+import { communityOrg, CommunityOrg } from "@/infrastructure/drizzle/schema/community-org";
 
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
@@ -44,7 +46,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
         .leftJoin(billDetails, eq(billDetails.billDashboardId, billDashboard.billDashboardId))
-        .leftJoin(billLatestActions, eq(billLatestActions.billId, bill.billId))
+        .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
         .where(eq(billDashboard.dashboardId, dashboardId))
@@ -70,7 +72,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
         .leftJoin(billDetails, eq(billDetails.billDashboardId, billDashboard.billDashboardId))
-        .leftJoin(billLatestActions, eq(billLatestActions.billId, bill.billId))
+        .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(bill.billId, billId)))
@@ -141,6 +143,42 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .innerJoin(user, eq(discussionComment.userId, user.userId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
         .orderBy(desc(discussionComment.commentDatetime))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getIssues(billId: number, dashboardId: number): Promise<Issue[] | null> {
+      const itemsData = (await db
+        .select({issue: issue})
+        .from(billIssue)
+        .innerJoin(billDetails, eq(billIssue.billDetailsId, billDetails.billDetailsId))
+        .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
+        .innerJoin(issue, eq(billIssue.issueId, issue.issueId))
+        .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getCommunitySponsors(billId: number, dashboardId: number): Promise<CommunityOrg[] | null> {
+      const itemsData = (await db
+        .select({sponsor: communityOrg})
+        .from(billCommunitySponsor)
+        .innerJoin(billDetails, eq(billCommunitySponsor.billDetailsId, billDetails.billDetailsId))
+        .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
+        .innerJoin(communityOrg, eq(communityOrg.communityOrgId, billCommunitySponsor.communityOrgId))
+        .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
         .catch((e) => {
           console.log(e);
         })) as any;

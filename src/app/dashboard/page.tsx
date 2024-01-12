@@ -23,7 +23,7 @@ const Page = async ({}) => {
                   billCustomName={x.billDetails == null ? x.bill.billName : x.billDetails.alternateName}
                   billLatest={x.billLatest.lastText}
                   billUpcoming={x.billLatest.nextText}
-                  billLastAction="[last action]"
+                  billLastAction={x.billLatest.userText}
                   billSession={x.bill.legSession}
                   billPosition={x.orgPosition == null ? "Unknown" : x.orgPosition.orgPositionName}
                   billIssues="[issues]"
