@@ -16,9 +16,8 @@ export const legislator = dbSchema.table(
         name: text('name'), 
         district: integer('district'),
         party: text('party'), 
-      
     }
 )
 
-  export type Legislator = InferSelectModel<typeof legislator>;
-  export type NewLegislator = InferInsertModel<typeof legislator>;
+export type Legislator = InferSelectModel<typeof legislator>;
+export type NewLegislator = InferInsertModel<typeof legislator>;

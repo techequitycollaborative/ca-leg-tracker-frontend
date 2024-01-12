@@ -5,9 +5,8 @@ import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
 
 const Page = async ({}) => {
-  const bills = (await repositories.billRepository.list({ limit: 20 })) as
-    | IBillRepository[]
-    | null;
+  const dashboardId = 1; // update to pull from session
+  const bills = await repositories.billRepository.listEnrichedBills(dashboardId);
 
   return (
     <>
@@ -18,18 +17,18 @@ const Page = async ({}) => {
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <DashboardListItem
-                  billId={x.billId}
-                  billNumber={x.billNumber}
-                  billName={x.billName}
-                  billCustomName="[user inputted bill name]"
-                  billLatest="[last update]"
-                  billUpcoming="[next sched]"
-                  billLastAction="[last action]"
-                  billSession="[session name]"
-                  billPosition="[org position]"
+                  billId={x.bill.billId}
+                  billNumber={x.bill.billNumber}
+                  billName={x.bill.billName}
+                  billCustomName={x.billDetails == null ? x.bill.billName : x.billDetails.alternateName}
+                  billLatest={x.billLatest.lastText}
+                  billUpcoming={x.billLatest.nextText}
+                  billLastAction={x.billLatest.userText}
+                  billSession={x.bill.legSession}
+                  billPosition={x.orgPosition == null ? "Unknown" : x.orgPosition.orgPositionName}
                   billIssues="[issues]"
                   billCommittee="[committee]"
-                  billLink="[leginfo link]"
+                  billLink={x.bill.leginfoLink}
                 />
               </div>
             ))}

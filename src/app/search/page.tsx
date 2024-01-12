@@ -6,9 +6,7 @@ import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
 
 const Page = async ({}) => {
-  const bills = (await repositories.billRepository.list({ limit: 20 })) as
-    | IBillRepository[]
-    | null;
+  const bills = await repositories.billRepository.list({limit: 20});
 
   return (
     <>
@@ -23,8 +21,8 @@ const Page = async ({}) => {
                   billId={x.billId}
                   billNumber={x.billNumber}
                   billName={x.billName}
-                  billLatest="[last update]"
-                  billSession="[session name]"
+                  billLatest="[last activity]"
+                  billSession={x.legSession}
                   billAdd="[add to dashboard fn]"
                 />
               </div>

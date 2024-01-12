@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
 interface Props {
@@ -42,11 +43,20 @@ export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
 
 export const DashboardListItem: NextPage<DashboardListItemProps> = function DashboardListItem(props) {
   return (
-    <a href={'/bill/' + props.billId + '/details'}>
+    <div className="relative">
+      <a className="absolute left-0 top-0 bottom-0 right-0" href={'/bill/' + props.billId + '/details'}></a>
       <div className="border border-gray-500 rounded-xl p-4 m-2 flex">
         <div>
           <p><span className="font-bold">{props.billNumber}</span> {props.billCustomName}</p>
-          <p>{props.billLink} | {props.billSession}</p>
+          <div className="flex">
+            <p className="text-blue-lighter z-10 hover:opacity-70">
+              <a href={props.billLink} target="_blank" title={props.billNumber}>
+                {props.billNumber} <Image className="inline mb-1" src="/link.svg" alt="Link" width={14} height={14} />
+              </a>
+            </p>
+            <p className="mx-2">|</p>
+            <p>{props.billSession}</p>
+          </div>
           <div className="mt-2">
             <p className="text-sm text-gray-600"><span className="font-bold">Most recent activity:</span> {props.billLatest}</p>
             <p className="text-sm text-gray-600"><span className="font-bold">Upcoming activity:</span> {props.billUpcoming}</p>
@@ -63,6 +73,6 @@ export const DashboardListItem: NextPage<DashboardListItemProps> = function Dash
           <Button>Remove</Button>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
