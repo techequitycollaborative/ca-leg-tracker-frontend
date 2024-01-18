@@ -34,6 +34,10 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       super(bill, 'billId');
     }
 
+
+
+    // Bill lists
+
     public async listEnrichedBills(dashboardId: number): Promise<EnrichedBill[] | null>  {
       const itemsData = (await db
         .select({
@@ -59,6 +63,10 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       }
       return itemsData
     }
+
+
+
+    // Single bill history, details, discussion, and actions
 
     public async getEnrichedBillById(billId: number, dashboardId: number): Promise<EnrichedBill | null> {
       const item = (await db
@@ -153,9 +161,9 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return itemsData
     }
 
-    public async getIssues(billId: number, dashboardId: number): Promise<Issue[] | null> {
+    public async getBillIssues(billId: number, dashboardId: number): Promise<Issue[] | null> {
       const itemsData = (await db
-        .select({issue: issue})
+        .select({issueId: issue.issueId, issueName: issue.issueName})
         .from(billIssue)
         .innerJoin(billDetails, eq(billIssue.billDetailsId, billDetails.billDetailsId))
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
@@ -171,9 +179,9 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return itemsData
     }
 
-    public async getCommunitySponsors(billId: number, dashboardId: number): Promise<CommunityOrg[] | null> {
+    public async getBillCommunitySponsors(billId: number, dashboardId: number): Promise<CommunityOrg[] | null> {
       const itemsData = (await db
-        .select({sponsor: communityOrg})
+        .select({communityOrgId: communityOrg.communityOrgId, communityOrgName: communityOrg.communityOrgName})
         .from(billCommunitySponsor)
         .innerJoin(billDetails, eq(billCommunitySponsor.billDetailsId, billDetails.billDetailsId))
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
@@ -188,4 +196,122 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       }
       return itemsData
     }
+
+
+
+    // Insert and update functions
+
+    public async saveDiscussionComment(
+      dashboardId: number,
+      billId: number,
+      userId: number,
+      commentText: string
+    ) {
+      const item = (await db
+        .select()
+        .from(billDashboard)
+        .where(and(eq(billDashboard.billId, billId), eq(billDashboard.dashboardId, dashboardId)))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!item || item.length < 1) {
+        return null;
+      }
+      else {
+        await db.insert(discussionComment).values({
+          billDashboardId: item[0].billDashboardId,
+          userId: userId,
+          commentDatetime: new Date(),
+          commentText: commentText
+        } as any);
+      }
+    }
+
+    public async saveBillDetails(
+      billDetailsId: number,
+      alternateName: string,
+      policyNotes: string,
+      orgPosition: number,
+      platformArea: number,
+      communitySponsor: number,
+      politicalIntel: string,
+      assignedUser: number
+    ) {
+      // Update the bill details.
+      // Assumes a bill detail object has been created for any bill added to this dashboard.
+      const existingBillDetails = (await db
+        .select()
+        .from(billDetails)
+        .where(eq(billDetails.billDetailsId, billDetailsId))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!existingBillDetails || existingBillDetails.length < 1) {
+        return null;
+      }
+
+      await db
+        .update(billDetails)
+        .set({
+          alternateName: alternateName,
+          policyNotes: policyNotes,
+          orgPositionId: orgPosition,
+          politicalIntel: politicalIntel,
+          assignedUserId: assignedUser
+        })
+        .where(eq(billDetails.billDetailsId, billDetailsId));
+
+      // Check if a community sponsor row exists. If so, update; else create.
+      const existingCommunitySponsor = (await db
+        .select()
+        .from(billCommunitySponsor)
+        .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!existingCommunitySponsor || existingCommunitySponsor.length < 1) {
+        //insert
+      }
+      else {
+        await db
+          .update(billCommunitySponsor)
+          .set({
+            communityOrgId: communitySponsor
+          })
+          .where(eq(billCommunitySponsor.billCommunitySponsorId, existingCommunitySponsor[0].billCommunitySponsorId))
+      }
+
+      // Check if a bill issue row exists. If so, update; else create.
+      const existingIssue = (await db
+        .select()
+        .from(billIssue)
+        .where(eq(billIssue.billDetailsId, billDetailsId))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!existingIssue || existingIssue.length < 1) {
+        //insert
+      }
+      else {
+        await db
+          .update(billIssue)
+          .set({
+            issueId: platformArea
+          })
+          .where(eq(billIssue.billIssueId, existingIssue[0].billIssueId))
+      }
+    }
   }
+
+
+
+
+
+
+
+
+

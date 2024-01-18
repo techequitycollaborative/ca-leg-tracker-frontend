@@ -2,13 +2,16 @@ import Image from 'next/image';
 
 import { repositories } from '@/repositories/index';
 import { PageLayoutProps } from '@/definitions/page.types.definitions';
-import { Button } from '@/components/ui/button';
+import { saveDiscussionComment } from 'app/actions';
+import DiscussionComment from '@/components/forms/discussion-comment';
 
 const Layout = async ({ params, children }: PageLayoutProps) => {
   const dashboardId = 1; // update to pull from session
+  const userId = 1; // update to pull from session
   const { bill_id } = params;
-  const bill = await repositories.billRepository.getById(bill_id);
-  const discussion = await repositories.billRepository.getBillDiscussion(parseInt(bill_id), dashboardId);
+  const billId = parseInt(bill_id);
+  const bill = await repositories.billRepository.getById(billId);
+  const discussion = await repositories.billRepository.getBillDiscussion(billId, dashboardId);
 
   return (
     <>
@@ -35,8 +38,12 @@ const Layout = async ({ params, children }: PageLayoutProps) => {
         <div className="w-1/2 py-4 px-8 bg-gray-300">
           <h3 className="font-bold text-lg">Discussion</h3>
           <p className="font-bold text-sm mt-6">Add a note:</p>
-          <textarea className="w-full my-2"></textarea>
-          <Button>Submit</Button>
+          <DiscussionComment
+            submit={saveDiscussionComment}
+            dashboardId={dashboardId}
+            billId={billId}
+            userId={userId}
+          />
           <div className="my-10">
             {discussion &&
               discussion.map((x: any, i: any) => (
