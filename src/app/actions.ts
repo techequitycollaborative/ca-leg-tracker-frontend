@@ -1,6 +1,8 @@
 'use server'
 import { repositories } from '@/repositories/index';
- 
+import { login } from 'lib/session';
+import { redirect } from 'next/navigation'
+
 export async function saveDiscussionComment(formData: FormData) {
   await repositories.billRepository.saveDiscussionComment(
     parseInt(formData.get('dashboardId') as string),
@@ -21,4 +23,12 @@ export async function saveBillDetails(formData: FormData) {
     formData.get('politicalIntel') as string,
     parseInt(formData.get('assignedUser') as string)
   );
+}
+
+export async function saveLogin(formData: FormData) {
+  await login(
+    {userId: parseInt(formData.get('userId') as string), userName: formData.get('userName') as string},
+    {dashboardId: parseInt(formData.get('dashboardId') as string), dashboardName: formData.get('dashboardName') as string}
+  );
+  redirect('/dashboard');
 }

@@ -4,10 +4,11 @@ import BillNav from '@/components/bill-nav';
 import { Button } from '@/components/ui/button';
 
 import { saveBillDetails } from 'app/actions';
+import { getDashboard } from 'lib/session';
 import BillDetails from '@/components/forms/bill-details';
 
 const Page = async ({ params }: PageProps) => {
-  const dashboardId = 1; // update to pull from session
+  const dashboardId = (await getDashboard()).dashboardId;
   const { bill_id } = params;
   const bill = await repositories.billRepository.getEnrichedBillById(parseInt(bill_id), dashboardId);
   const issues = await repositories.billRepository.getBillIssues(parseInt(bill_id), dashboardId);

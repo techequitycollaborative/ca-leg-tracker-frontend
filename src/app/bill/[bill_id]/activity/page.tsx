@@ -3,9 +3,10 @@ import { PageProps } from '@/definitions/page.types.definitions';
 import BillNav from '@/components/bill-nav';
 import ActionListItem from '@/components/action-list-item';
 import { Button } from '@/components/ui/button';
+import { getDashboard } from 'lib/session';
 
 const Page = async ({ params }: PageProps) => {
-  const dashboardId = 1; // update to pull from session
+  const dashboardId = (await getDashboard()).dashboardId;
   const { bill_id } = params;
   const bill = await repositories.billRepository.getById(bill_id);
   const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));

@@ -5,9 +5,11 @@ import { PageLayoutProps } from '@/definitions/page.types.definitions';
 import { saveDiscussionComment } from 'app/actions';
 import DiscussionComment from '@/components/forms/discussion-comment';
 
+import { getUser, getDashboard } from 'lib/session';
+
 const Layout = async ({ params, children }: PageLayoutProps) => {
-  const dashboardId = 1; // update to pull from session
-  const userId = 1; // update to pull from session
+  const dashboardId = (await getDashboard()).dashboardId;
+  const userId = (await getUser()).userId;
   const { bill_id } = params;
   const billId = parseInt(bill_id);
   const bill = await repositories.billRepository.getById(billId);

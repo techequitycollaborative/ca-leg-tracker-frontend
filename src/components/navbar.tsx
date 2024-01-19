@@ -14,7 +14,7 @@ const Navbar: NextPage<Props> = function Navbar(props) {
         <span><Link href="/calendar">calendar</Link> | </span>
         <span>[DASHBOARD PICKER] | </span>
         <span><Link href="/settings">settings</Link> | </span>
-        <span><Link href="/login">logout</Link> </span>
+        <span><Link href="/logout">logout</Link> </span>
       </p>
     </div>
   );

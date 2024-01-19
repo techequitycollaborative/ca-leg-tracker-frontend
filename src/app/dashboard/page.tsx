@@ -3,9 +3,10 @@ import { DashboardListItem } from '@/components/list-item';
 
 import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
+import { getDashboard } from 'lib/session';
 
 const Page = async ({}) => {
-  const dashboardId = 1; // update to pull from session
+  const dashboardId = (await getDashboard()).dashboardId;
   const bills = await repositories.billRepository.listEnrichedBills(dashboardId);
 
   return (
