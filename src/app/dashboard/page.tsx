@@ -3,6 +3,7 @@ import { DashboardListItem } from '@/components/list-item';
 
 import { IBillRepository } from '@/definitions/bill.repository';
 import { repositories } from '@/repositories/index';
+import { removeBillFromDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
 const Page = async ({}) => {
@@ -18,6 +19,7 @@ const Page = async ({}) => {
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <DashboardListItem
+                  dashboardId={dashboardId}
                   billId={x.bill.billId}
                   billNumber={x.bill.billNumber}
                   billName={x.bill.billName}
@@ -30,6 +32,7 @@ const Page = async ({}) => {
                   billIssues="[issues]"
                   billCommittee="[committee]"
                   billLink={x.bill.leginfoLink}
+                  billRemove={removeBillFromDashboard}
                 />
               </div>
             ))}

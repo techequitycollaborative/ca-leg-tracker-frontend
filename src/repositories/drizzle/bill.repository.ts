@@ -53,7 +53,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
-        .where(eq(billDashboard.dashboardId, dashboardId))
+        .where(and(eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
         .catch((e) => {
           console.log(e);
         })) as any;

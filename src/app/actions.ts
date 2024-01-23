@@ -32,3 +32,17 @@ export async function saveLogin(formData: FormData) {
   );
   redirect('/dashboard');
 }
+
+export async function addBillToDashboard(formData: FormData) {
+  await repositories.dashboardRepository.addBillToDashboard(
+    parseInt(formData.get('dashboardId') as string),
+    parseInt(formData.get('billId') as string)
+  );
+}
+
+export async function removeBillFromDashboard(formData: FormData) {
+  await repositories.dashboardRepository.removeBillFromDashboard(
+    parseInt(formData.get('dashboardId') as string),
+    parseInt(formData.get('billId') as string)
+  );
+}
