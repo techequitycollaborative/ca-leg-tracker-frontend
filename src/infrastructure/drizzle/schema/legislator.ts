@@ -12,10 +12,10 @@ export const legislator = dbSchema.table(
     'legislator',
     {
       legislatorId: integer('legislator_id').primaryKey(),
-        chamberId: integer('chamber_id'),
-        name: text('name'), 
-        district: integer('district'),
-        party: text('party'), 
+      chamberId: integer('chamber_id'),
+      name: text('name'), 
+      district: integer('district'),
+      party: text('party'), 
     }
 )
 

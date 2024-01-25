@@ -15,8 +15,13 @@ export const userAction = dbSchema.table(
         userActionId: integer('user_action_id').primaryKey(),
         billDashboardId: integer('bill_dashboard_id'),
         userId: integer('user_id'), 
-        date: date('date'),
-        actionType: text('action_type'),
+        dueDate: date('due_date'),
+        userActionTypeId: integer('user_action_type_id'),
+        userActionStatusId: integer('user_action_status_id'),
+        legislatorId: integer('legislator_id'),
+        committeeId: integer('committee_id'),
+        link: text('link'),
+        notes: text('notes'),
     }
 )
 

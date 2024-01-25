@@ -1,8 +1,10 @@
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { BillDashboardAdd, BillDashboardRemove } from '@/components/forms/dashboard-toggle';
 
 interface Props {
+  dashboardId: number;
   billId: number;
   billNumber: string;
   billName: string;
@@ -11,7 +13,7 @@ interface Props {
 }
 
 interface ListItemProps extends Props {
-  billAdd: string;
+  billAdd: (formData: FormData) => Promise<void>;
 }
 
 interface DashboardListItemProps extends Props {
@@ -22,6 +24,7 @@ interface DashboardListItemProps extends Props {
   billLink: string;
   billLastAction: string;
   billUpcoming: string;
+  billRemove: (formData: FormData) => Promise<void>;
 }
 
 export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
@@ -34,7 +37,11 @@ export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
         </div>
         <div className="ml-auto">
           <p>{props.billSession}</p>
-          <Button>+ Add to dashboard</Button>
+          <BillDashboardAdd
+            submit={props.billAdd}
+            dashboardId={props.dashboardId}
+            billId={props.billId}
+          />
         </div>
       </div>
     </a>
@@ -68,9 +75,13 @@ export const DashboardListItem: NextPage<DashboardListItemProps> = function Dash
             <p className="ml-4">Committee: {props.billCommittee}</p>
           </div>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto z-10 hover:opacity-70">
           <p>Tracking in: [dashboard name]</p>
-          <Button>Remove</Button>
+          <BillDashboardRemove
+            submit={props.billRemove}
+            dashboardId={props.dashboardId}
+            billId={props.billId}
+          />
         </div>
       </div>
     </div>
