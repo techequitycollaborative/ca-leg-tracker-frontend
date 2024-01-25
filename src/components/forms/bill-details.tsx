@@ -82,6 +82,7 @@ export default function BillDetails({
               value={orgPosition}
               onChange={e => handleInputChange(e, setOrgPosition)}
             >
+              <option value={undefined}></option>
               {positionList.map((x: any, i: any) => (
                   <option key={i} value={x.orgPositionId}>{x.orgPositionName}</option>
               ))}
@@ -95,6 +96,7 @@ export default function BillDetails({
               value={platformArea}
               onChange={e => handleInputChange(e, setPlatformArea)}
             >
+              <option value={undefined}></option>
               {issueList.map((x: any, i: any) => (
                   <option key={i} value={x.issueId}>{x.issueName}</option>
               ))}
@@ -108,6 +110,7 @@ export default function BillDetails({
               value={communitySponsor}
               onChange={e => handleInputChange(e, setCommunitySponsor)}
             >
+              <option value={undefined}></option>
               {sponsorList.map((x: any, i: any) => (
                   <option key={i} value={x.communityOrgId}>{x.communityOrgName}</option>
               ))}
@@ -130,6 +133,7 @@ export default function BillDetails({
               value={assignedTo}
               onChange={e => handleInputChange(e, setAssignedTo)}
             >
+              <option value={undefined}></option>
               {userList.map((x: any, i: any) => (
                   <option key={i} value={x.userId}>{x.userName}</option>
               ))}

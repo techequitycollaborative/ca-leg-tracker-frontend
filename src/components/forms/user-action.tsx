@@ -113,6 +113,7 @@ export default function EditUserAction({
               value={legislatorId}
               onChange={e => handleInputChange(e, setLegislatorId)}
             >
+              <option value={undefined}></option>
               {legislatorList.map((x: any, i: any) => (
                   <option key={i} value={x.legislatorId}>{x.name}</option>
               ))}
@@ -126,6 +127,7 @@ export default function EditUserAction({
               value={committeeId}
               onChange={e => handleInputChange(e, setCommitteeId)}
             >
+              <option value={undefined}></option>
               {committeeList.map((x: any, i: any) => (
                   <option key={i} value={x.committeeId}>{x.name}</option>
               ))}

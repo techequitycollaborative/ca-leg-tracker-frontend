@@ -316,11 +316,11 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       billDetailsId: number,
       alternateName: string,
       policyNotes: string,
-      orgPosition: number,
-      platformArea: number,
-      communitySponsor: number,
+      orgPositionId: number | null,
+      issueId: number | null,
+      communityOrgId: number | null,
       politicalIntel: string,
-      assignedUser: number
+      assignedUserId: number | null
     ) {
       // Update the bill details.
       // Assumes a bill detail object has been created for any bill added to this dashboard.
@@ -341,58 +341,80 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .set({
           alternateName: alternateName,
           policyNotes: policyNotes,
-          orgPositionId: orgPosition,
+          orgPositionId: orgPositionId,
           politicalIntel: politicalIntel,
-          assignedUserId: assignedUser
+          assignedUserId: assignedUserId
         })
         .where(eq(billDetails.billDetailsId, billDetailsId));
 
-      // Check if a community sponsor row exists. If so, update; else create.
-      const existingCommunitySponsor = (await db
-        .select()
-        .from(billCommunitySponsor)
-        .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
-        .catch((e) => {
-          console.log(e);
-        })) as any;
-
-      if (!existingCommunitySponsor || existingCommunitySponsor.length < 1) {
-        await db.insert(billCommunitySponsor).values({
-          billDetailsId: billDetailsId,
-          communityOrgId: communitySponsor
-        } as any);
+      // Community sponsor left blank: delete from table if row already exists
+      if (communityOrgId == null) {
+        await db
+          .delete(billCommunitySponsor)
+          .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
+          .catch((e) => {
+            console.log(e);
+          }) as any;
       }
       else {
-        await db
-          .update(billCommunitySponsor)
-          .set({
-            communityOrgId: communitySponsor
-          })
-          .where(eq(billCommunitySponsor.billCommunitySponsorId, existingCommunitySponsor[0].billCommunitySponsorId))
+        // Check if a community sponsor row exists. If so, update; else create.
+        const existingCommunitySponsor = (await db
+          .select()
+          .from(billCommunitySponsor)
+          .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
+          .catch((e) => {
+            console.log(e);
+          })) as any;
+
+        if (!existingCommunitySponsor || existingCommunitySponsor.length < 1) {
+          await db.insert(billCommunitySponsor).values({
+            billDetailsId: billDetailsId,
+            communityOrgId: communityOrgId
+          } as any);
+        }
+        else {
+          await db
+            .update(billCommunitySponsor)
+            .set({
+              communityOrgId: communityOrgId
+            })
+            .where(eq(billCommunitySponsor.billCommunitySponsorId, existingCommunitySponsor[0].billCommunitySponsorId))
+        }
       }
 
-      // Check if a bill issue row exists. If so, update; else create.
-      const existingIssue = (await db
-        .select()
-        .from(billIssue)
-        .where(eq(billIssue.billDetailsId, billDetailsId))
-        .catch((e) => {
-          console.log(e);
-        })) as any;
-
-      if (!existingIssue || existingIssue.length < 1) {
-        await db.insert(billIssue).values({
-          billDetailsId: billDetailsId,
-          issueId: platformArea
-        } as any);
+      // Issue left blank: delete from table if row already exists
+      if (issueId == null) {
+        await db
+          .delete(billIssue)
+          .where(eq(billIssue.billDetailsId, billDetailsId))
+          .catch((e) => {
+            console.log(e);
+          }) as any;
       }
       else {
-        await db
-          .update(billIssue)
-          .set({
-            issueId: platformArea
-          })
-          .where(eq(billIssue.billIssueId, existingIssue[0].billIssueId))
+        // Check if a bill issue row exists. If so, update; else create.
+        const existingIssue = (await db
+          .select()
+          .from(billIssue)
+          .where(eq(billIssue.billDetailsId, billDetailsId))
+          .catch((e) => {
+            console.log(e);
+          })) as any;
+
+        if (!existingIssue || existingIssue.length < 1) {
+          await db.insert(billIssue).values({
+            billDetailsId: billDetailsId,
+            issueId: issueId
+          } as any);
+        }
+        else {
+          await db
+            .update(billIssue)
+            .set({
+              issueId: issueId
+            })
+            .where(eq(billIssue.billIssueId, existingIssue[0].billIssueId))
+        }
       }
     }
   }

@@ -13,20 +13,36 @@ export async function saveDiscussionComment(formData: FormData) {
 }
 
 export async function saveBillDetails(formData: FormData) {
+  const orgPositionData = parseInt(formData.get('orgPosition') as string);
+  const platformAreaData = parseInt(formData.get('platformArea') as string);
+  const communitySponsorData = parseInt(formData.get('communitySponsor') as string);
+  const assignedUserData = parseInt(formData.get('assignedUser') as string);
+
+  const orgPositionId = isNaN(orgPositionData) ? null : orgPositionData;
+  const issueId = isNaN(platformAreaData) ? null : platformAreaData;
+  const communityOrgId = isNaN(communitySponsorData) ? null : communitySponsorData;
+  const userId = isNaN(assignedUserData) ? null : assignedUserData;
+
   await repositories.billRepository.saveBillDetails(
     parseInt(formData.get('billDetailsId') as string),
     formData.get('alternateName') as string,
     formData.get('policyNotes') as string,
-    parseInt(formData.get('orgPosition') as string),
-    parseInt(formData.get('platformArea') as string),
-    parseInt(formData.get('communitySponsor') as string),
+    orgPositionId,
+    issueId,
+    communityOrgId,
     formData.get('politicalIntel') as string,
-    parseInt(formData.get('assignedUser') as string)
+    userId
   );
 }
 
 export async function saveUserAction(formData: FormData) {
   const userActionId = (formData.get('userActionId') ? parseInt(formData.get('userActionId') as string) : null);
+
+  const legislatorIdData = parseInt(formData.get('legislatorId') as string);
+  const committeeIdData = parseInt(formData.get('committeeId') as string);
+
+  const legislatorId = isNaN(legislatorIdData) ? null : legislatorIdData;
+  const committeeId = isNaN(committeeIdData) ? null : committeeIdData;
 
   await repositories.billRepository.saveUserAction(
     parseInt(formData.get('billDashboardId') as string),
@@ -34,8 +50,8 @@ export async function saveUserAction(formData: FormData) {
     parseInt(formData.get('typeId') as string),
     formData.get('dueDate') as string,
     parseInt(formData.get('statusId') as string),
-    parseInt(formData.get('legislatorId') as string),
-    parseInt(formData.get('committeeId') as string),
+    legislatorId,
+    committeeId,
     formData.get('link') as string,
     formData.get('notes') as string,
   );
