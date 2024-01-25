@@ -357,7 +357,10 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         })) as any;
 
       if (!existingCommunitySponsor || existingCommunitySponsor.length < 1) {
-        //insert
+        await db.insert(billCommunitySponsor).values({
+          billDetailsId: billDetailsId,
+          communityOrgId: communitySponsor
+        } as any);
       }
       else {
         await db
@@ -378,7 +381,10 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         })) as any;
 
       if (!existingIssue || existingIssue.length < 1) {
-        //insert
+        await db.insert(billIssue).values({
+          billDetailsId: billDetailsId,
+          issueId: platformArea
+        } as any);
       }
       else {
         await db
