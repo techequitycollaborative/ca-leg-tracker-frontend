@@ -4,4 +4,4 @@ import { IBaseRepository } from "./base.repository";
 export interface ILegislator extends Legislator {}
 export interface IPartialLegislator extends Partial<ILegislator> {}
 
-export interface ILegislatorRepository extends IBaseRepository<ILegislatorRepository> {}
+export interface ILegislatorRepository extends IBaseRepository<ILegislator> {}

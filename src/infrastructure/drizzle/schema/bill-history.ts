@@ -14,8 +14,8 @@ export const billHistory = dbSchema.table(
     {
         billHistoryId: integer('bill_history_id').primaryKey(),
         billId: integer('bill_id'),
-        entryDate: date('entry_date'),
-        entryText: text('entry_text'),
+        eventDate: date('event_date'),
+        eventText: text('event_text'),
     }
 )
 

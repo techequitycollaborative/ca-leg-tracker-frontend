@@ -3,6 +3,8 @@ import { billHistory, BillHistory } from "@/infrastructure/drizzle/schema/bill-h
 import { billSchedule, BillSchedule } from "@/infrastructure/drizzle/schema/bill-schedule";
 import { user, User } from "@/infrastructure/drizzle/schema/app-user";
 import { userAction, UserAction } from "@/infrastructure/drizzle/schema/user-action";
+import { userActionType, UserActionType } from "@/infrastructure/drizzle/schema/user-action-type";
+import { userActionStatus, UserActionStatus } from "@/infrastructure/drizzle/schema/user-action-status";
 import { discussionComment, DiscussionComment } from "@/infrastructure/drizzle/schema/discussion-comment";
 import { billLatestActions, BillLatestActions } from "@/infrastructure/drizzle/schema/views/bill-latest-actions";
 import { billDashboard, BillDashboard } from "@/infrastructure/drizzle/schema/bill-dashboard";
@@ -12,6 +14,8 @@ import { billIssue, BillIssue } from "@/infrastructure/drizzle/schema/bill-issue
 import { issue, Issue } from "@/infrastructure/drizzle/schema/issue";
 import { billCommunitySponsor, BillCommunitySponsor } from "@/infrastructure/drizzle/schema/bill-community-sponsor";
 import { communityOrg, CommunityOrg } from "@/infrastructure/drizzle/schema/community-org";
+import { legislator, Legislator } from "@/infrastructure/drizzle/schema/legislator";
+import { committee, Committee } from "@/infrastructure/drizzle/schema/committee";
 
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
@@ -94,12 +98,29 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return item[0];
     }
 
+    public async getBillDashboardId(billId: number, dashboardId: number): Promise<number | null> {
+      const item = (await db
+        .select()
+        .from(billDashboard)
+        .where(and(eq(billDashboard.billId, billId),eq(billDashboard.dashboardId, dashboardId)))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+      
+      if (!item || item.length < 1) {
+        return null;
+      }
+      else {
+        return item[0].billDashboardId;
+      }
+    }
+
     public async getBillHistoryByBillId(billId: number): Promise<BillHistory[] | null> {
       const itemsData = (await db
         .select()
         .from(billHistory)
         .where(eq(billHistory.billId, billId))
-        .orderBy(desc(billHistory.entryDate))
+        .orderBy(desc(billHistory.eventDate),desc(billHistory.billHistoryId))
         .catch((e) => {
           console.log(e);
         })) as BillHistory[] | null;
@@ -115,7 +136,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .select()
         .from(billSchedule)
         .where(eq(billSchedule.billId, billId))
-        .orderBy(desc(billSchedule.eventDate))
+        .orderBy(desc(billSchedule.eventDate),desc(billSchedule.billScheduleId))
         .catch((e) => {
           console.log(e);
         })) as BillSchedule[] | null;
@@ -128,11 +149,22 @@ import { desc, eq, sql, and } from 'drizzle-orm';
     
     public async getBillActions(billId: number, dashboardId: number): Promise<UserAction[] | null> {
       const itemsData = (await db
-        .select()
+        .select({
+          userAction: userAction,
+          userActionTypeName: userActionType.userActionTypeName,
+          userActionStatusName: userActionStatus.userActionStatusName,
+          legislatorName: legislator.name,
+          committeeName: committee.name,
+        } as any)
         .from(userAction)
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, userAction.billDashboardId))
+        .innerJoin(userActionType, eq(userActionType.userActionTypeId, userAction.userActionTypeId))
+        .innerJoin(userActionStatus, eq(userActionStatus.userActionStatusId, userAction.userActionStatusId))
+        .leftJoin(user, eq(user.userId, userAction.userId))
+        .leftJoin(legislator, eq(legislator.legislatorId, userAction.legislatorId))
+        .leftJoin(committee, eq(committee.committeeId, userAction.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
-        .orderBy(desc(userAction.date))
+        .orderBy(desc(userAction.dueDate))
         .catch((e) => {
           console.log(e);
         })) as any;
@@ -228,6 +260,58 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       }
     }
 
+    public async saveUserAction(
+      billDashboardId: number,
+      userActionId: number | null,
+      userActionTypeId: number,
+      dueDate: string,
+      userActionStatusId: number,
+      legislatorId: number | null,
+      committeeId: number | null,
+      link: string | null,
+      notes: string | null
+    ) {
+      const existingUserActionId = userActionId ? userActionId : -1; // Set to invalid ID if null
+
+      const existingUserAction = (await db
+        .select()
+        .from(userAction)
+        .where(eq(userAction.userActionId, existingUserActionId))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!existingUserAction || existingUserAction.length < 1) {
+        // Add new
+        await db.insert(userAction).values({
+          billDashboardId: billDashboardId,
+          userId: null,
+          dueDate: dueDate,
+          userActionTypeId: userActionTypeId,
+          userActionStatusId: userActionStatusId,
+          legislatorId: legislatorId,
+          committeeId: committeeId,
+          link: link,
+          notes: notes
+        } as any);
+      }
+      else {
+        // Edit
+        await db
+          .update(userAction)
+          .set({
+            dueDate: dueDate,
+            userActionTypeId: userActionTypeId,
+            userActionStatusId: userActionStatusId,
+            legislatorId: legislatorId,
+            committeeId: committeeId,
+            link: link,
+            notes: notes
+          })
+          .where(eq(userAction.userActionId, existingUserActionId));
+      }
+    }
+
     public async saveBillDetails(
       billDetailsId: number,
       alternateName: string,
@@ -306,12 +390,3 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       }
     }
   }
-
-
-
-
-
-
-
-
-

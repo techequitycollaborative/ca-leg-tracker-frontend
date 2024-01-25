@@ -1,11 +1,11 @@
 import { BaseRepository } from "./base.repository";
 import { db } from "@/infrastructure/drizzle";
-import { ILegislatorRepository } from "definitions/legislator.repository";
+import { ILegislator, ILegislatorRepository } from "definitions/legislator.repository";
 import { legislator } from "@/infrastructure/drizzle/schema/legislator";
 
   
   export class LegislatorRepository
-    extends BaseRepository<ILegislatorRepository>
+    extends BaseRepository<ILegislator>
     implements ILegislatorRepository
   {
     constructor() {

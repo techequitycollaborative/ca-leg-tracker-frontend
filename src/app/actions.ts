@@ -25,6 +25,22 @@ export async function saveBillDetails(formData: FormData) {
   );
 }
 
+export async function saveUserAction(formData: FormData) {
+  const userActionId = (formData.get('userActionId') ? parseInt(formData.get('userActionId') as string) : null);
+
+  await repositories.billRepository.saveUserAction(
+    parseInt(formData.get('billDashboardId') as string),
+    userActionId,
+    parseInt(formData.get('typeId') as string),
+    formData.get('dueDate') as string,
+    parseInt(formData.get('statusId') as string),
+    parseInt(formData.get('legislatorId') as string),
+    parseInt(formData.get('committeeId') as string),
+    formData.get('link') as string,
+    formData.get('notes') as string,
+  );
+}
+
 export async function saveLogin(formData: FormData) {
   await login(
     {userId: parseInt(formData.get('userId') as string), userName: formData.get('userName') as string},

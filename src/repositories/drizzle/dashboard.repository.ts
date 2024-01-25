@@ -28,6 +28,7 @@ import { eq, and } from 'drizzle-orm';
         })) as any;
 
       if (!item || item.length < 1) {
+        // If the bill has never been added to this dashboard, create bill_dashboard and bill_details rows.
         const billDashboardInsert = await db
           .insert(billDashboard)
           .values({
@@ -47,6 +48,7 @@ import { eq, and } from 'drizzle-orm';
         } as any);
       }
       else {
+        // If the bill has previously been added to this dashboard, unhide it.
         await db
           .update(billDashboard)
           .set({
@@ -60,6 +62,8 @@ import { eq, and } from 'drizzle-orm';
       dashboardId: number,
       billId: number
     ) {
+      // Hide rather than deleting dashboard-specific bill data.
+      // This allows recovery of saved details if the bill is later added back to the dashboard.
       await db
         .update(billDashboard)
         .set({

@@ -8,7 +8,7 @@ const Navbar: NextPage<Props> = function Navbar(props) {
   return (
     <div className="w-full bg-gray-300">
       <p>
-        <span><Link href=".">[LOGO]</Link> | </span>
+        <span><Link href="/">[LOGO]</Link> | </span>
         <span><Link href="/search">search bills</Link> | </span>
         <span><Link href="/dashboard">dashboard</Link> | </span>
         <span><Link href="/calendar">calendar</Link> | </span>
