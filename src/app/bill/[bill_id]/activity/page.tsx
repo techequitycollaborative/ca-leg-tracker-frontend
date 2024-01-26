@@ -11,7 +11,7 @@ import EditUserAction from '@/components/forms/user-action';
 const Page = async ({ params }: PageProps) => {
   const dashboardId = (await getDashboard()).dashboardId;
   const { bill_id } = params;
-  const billDashboardId = await repositories.billRepository.getBillDashboardId(parseInt(bill_id), dashboardId);
+  const billDashboard = (await repositories.billRepository.getBillDashboard(parseInt(bill_id), dashboardId));
   const bill = await repositories.billRepository.getById(bill_id);
   const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));
   const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
@@ -35,7 +35,7 @@ const Page = async ({ params }: PageProps) => {
             <EditUserAction
               isNew={true}
               submit={saveUserAction}
-              billDashboardId={billDashboardId}
+              billDashboardId={billDashboard?.billDashboardId}
               userAction={null}
               userList={userList}
               userActionTypeList={userActionTypeList}

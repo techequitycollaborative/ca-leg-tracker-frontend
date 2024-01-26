@@ -3,7 +3,9 @@ import { redirect } from 'next/navigation';
 const Page = async ({}) => {
   return (
     <>
-      <p>settings page</p>
+      <div>
+        <p className="text-center mt-20">settings page</p>
+      </div>
     </>
   );
 };

@@ -78,7 +78,7 @@ const Page = async ({ params }: PageProps) => {
         <p><span className="font-bold">Title:</span> {bill?.bill.billName}</p>
         <p><span className="font-bold">House Location:</span> [last action house]</p>
         <p><span className="font-bold">Introduced Date:</span> [date]</p>
-        <p><span className="font-bold">Committee Location:</span> [last action committee]</p>
+        <p><span className="font-bold">Committee Location:</span> {bill?.committee.name}</p>
       </div>
     </>
   );

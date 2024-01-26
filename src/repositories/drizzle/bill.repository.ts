@@ -28,6 +28,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
     billLatest: BillLatestActions;
     orgPosition: OrgPosition;
     assignedUser: User;
+    committee: Committee;
   }
 
   export class BillRepository
@@ -49,7 +50,8 @@ import { desc, eq, sql, and } from 'drizzle-orm';
           billDetails: billDetails,
           billLatest: billLatestActions,
           orgPosition: orgPosition,
-          assignedUser: user
+          assignedUser: user,
+          committee: committee
         })
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
@@ -57,6 +59,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
+        .leftJoin(committee, eq(bill.committeeId, committee.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
         .catch((e) => {
           console.log(e);
@@ -79,7 +82,8 @@ import { desc, eq, sql, and } from 'drizzle-orm';
           billDetails: billDetails,
           billLatest: billLatestActions,
           orgPosition: orgPosition,
-          assignedUser: user
+          assignedUser: user,
+          committee: committee
         })
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
@@ -87,6 +91,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
+        .leftJoin(committee, eq(bill.committeeId, committee.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(bill.billId, billId)))
         .catch((e) => {
           console.log(e);
@@ -98,7 +103,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return item[0];
     }
 
-    public async getBillDashboardId(billId: number, dashboardId: number): Promise<number | null> {
+    public async getBillDashboard(billId: number, dashboardId: number): Promise<BillDashboard | null> {
       const item = (await db
         .select()
         .from(billDashboard)
@@ -111,7 +116,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         return null;
       }
       else {
-        return item[0].billDashboardId;
+        return item[0];
       }
     }
 

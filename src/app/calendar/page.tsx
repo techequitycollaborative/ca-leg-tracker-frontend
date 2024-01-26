@@ -4,7 +4,7 @@ const Page = async ({}) => {
   return (
     <>
       <div>
-        <p>calendar view</p>
+        <p className="text-center mt-20">calendar view</p>
       </div>
     </>
   );

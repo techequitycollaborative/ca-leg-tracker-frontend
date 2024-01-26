@@ -8,20 +8,20 @@ import { addBillToDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
 const Page = async ({}) => {
-  const dashboardId = (await getDashboard()).dashboardId;
+  const dashboard = await getDashboard();
   const bills = await repositories.billRepository.list({limit: 20});
 
   return (
     <>
       <div>
         <ListSearchBar />
-        <ListNav />
+        {/* bill sort and filters */}
         <div className="m-2">
           {bills &&
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <ListItem
-                  dashboardId={dashboardId}
+                  dashboard={dashboard}
                   billId={x.billId}
                   billNumber={x.billNumber}
                   billName={x.billName}

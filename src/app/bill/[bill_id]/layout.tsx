@@ -1,23 +1,30 @@
 import Image from 'next/image';
+import { redirect } from 'next/navigation'
 
 import { repositories } from '@/repositories/index';
 import { PageLayoutProps } from '@/definitions/page.types.definitions';
-import { saveDiscussionComment } from 'app/actions';
+import { saveDiscussionComment, removeBillFromDashboard } from 'app/actions';
 import DiscussionComment from '@/components/forms/discussion-comment';
+import { BillDashboardRemove } from '@/components/forms/dashboard-toggle';
 
 import { getUser, getDashboard } from 'lib/session';
 
 const Layout = async ({ params, children }: PageLayoutProps) => {
-  const dashboardId = (await getDashboard()).dashboardId;
+  const dashboard = await getDashboard();
   const userId = (await getUser()).userId;
   const { bill_id } = params;
   const billId = parseInt(bill_id);
+
+  const billDashboard = await repositories.billRepository.getBillDashboard(billId, dashboard.dashboardId);
+  if (!billDashboard || billDashboard.hidden == true) {
+    redirect('/');
+  }
+
   const bill = await repositories.billRepository.getById(billId);
-  const discussion = await repositories.billRepository.getBillDiscussion(billId, dashboardId);
+  const discussion = await repositories.billRepository.getBillDiscussion(billId, dashboard.dashboardId);
 
   return (
     <>
-      <div></div>
       <div className="flex m-4">
         <div>
           <h2 className="text-xl"><span className="font-bold">{bill?.billNumber}</span> {bill?.billName}</h2>
@@ -28,11 +35,18 @@ const Layout = async ({ params, children }: PageLayoutProps) => {
               </a>
             </p>
             <p className="mx-2">|</p>
-            <p>{bill?.legSession}</p>
+            <p>Legislative Session: {bill?.legSession}</p>
           </div>
         </div>
-        <div className="ml-auto">
-          <p>Tracking in: [dashboard name]</p>
+        <div className="ml-auto flex">
+          <p className="mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{dashboard.dashboardName}</span></p>
+          <div className="text-right ml-2">
+            <BillDashboardRemove
+              submit={removeBillFromDashboard}
+              dashboardId={dashboard.dashboardId}
+              billId={billId}
+            />
+          </div>
         </div>
       </div>
       <div className="flex m-4">
@@ -42,7 +56,7 @@ const Layout = async ({ params, children }: PageLayoutProps) => {
           <p className="font-bold text-sm mt-6">Add a note:</p>
           <DiscussionComment
             submit={saveDiscussionComment}
-            dashboardId={dashboardId}
+            dashboardId={dashboard.dashboardId}
             billId={billId}
             userId={userId}
           />
