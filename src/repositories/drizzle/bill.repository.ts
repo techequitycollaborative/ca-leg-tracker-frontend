@@ -20,7 +20,7 @@ import { committee, Committee } from "@/infrastructure/drizzle/schema/committee"
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
 import { db } from "@/infrastructure/drizzle";
-import { desc, eq, sql, and } from 'drizzle-orm';
+import { desc, eq, sql, and, or, ilike } from 'drizzle-orm';
 
   export interface EnrichedBill {
     bill: Bill;
@@ -61,6 +61,29 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
         .leftJoin(committee, eq(bill.committeeId, committee.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async searchBillsWithDashboardStatus(dashboardId: number, searchString: string | undefined, limit: number): Promise<Bill[] | null> {
+      const dbSearchString = (searchString === undefined ? '%' : '%' + searchString + '%');
+
+      const itemsData = (await db
+        .select({
+          bill: bill,
+          dashboardId: billDashboard.dashboardId
+        })
+        .from(this.table)
+        .leftJoin(billDashboard, and(eq(bill.billId, billDashboard.billId),eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
+        .where(or(ilike(bill.billNumber, dbSearchString),ilike(bill.fullText, dbSearchString),ilike(bill.author, dbSearchString),ilike(bill.billName, dbSearchString)))
+        .orderBy(bill.billNumber)
+        .limit(limit)
         .catch((e) => {
           console.log(e);
         })) as any;
@@ -125,7 +148,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .select()
         .from(billHistory)
         .where(eq(billHistory.billId, billId))
-        .orderBy(desc(billHistory.eventDate),desc(billHistory.billHistoryId))
+        .orderBy(desc(billHistory.historyOrder))
         .catch((e) => {
           console.log(e);
         })) as BillHistory[] | null;

@@ -32,7 +32,7 @@ const ActionListItem: NextPage<Props> = function ActionListItem(props) {
           </div>
           <div className="flex">
             <p className="w-1/3 font-bold">Due on:</p>
-            <p className="w-2/3">{props.userAction.dueDate}</p>
+            <p className="w-2/3">{new Date(props.userAction.dueDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' })}</p>
           </div>
           <div className="flex">
             <p className="w-1/3 font-bold">Status:</p>

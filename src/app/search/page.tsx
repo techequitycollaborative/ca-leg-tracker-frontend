@@ -7,14 +7,17 @@ import { repositories } from '@/repositories/index';
 import { addBillToDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
-const Page = async ({}) => {
+const Page = async ({ searchParams }: any) => {
   const dashboard = await getDashboard();
-  const bills = await repositories.billRepository.list({limit: 20});
+  const searchTerms = searchParams?.s as string;
+  let bills = await repositories.billRepository.searchBillsWithDashboardStatus(dashboard.dashboardId, searchTerms, 100);
 
   return (
     <>
       <div>
-        <ListSearchBar />
+        <ListSearchBar
+          searchTerms={searchTerms}
+        />
         {/* bill sort and filters */}
         <div className="m-2">
           {bills &&
@@ -22,11 +25,14 @@ const Page = async ({}) => {
               <div key={i}>
                 <ListItem
                   dashboard={dashboard}
-                  billId={x.billId}
-                  billNumber={x.billNumber}
-                  billName={x.billName}
-                  billLatest="[last activity]"
-                  billSession={x.legSession}
+                  billId={x.bill.billId}
+                  billNumber={x.bill.billNumber}
+                  billName={x.bill.billName}
+                  billAuthor={x.bill.author}
+                  billLink={x.bill.leginfoLink}
+                  billExcerpt={x.bill.fullText?.slice(0,300).replace(/\\n/g, ' ') + ' ...'}
+                  billSession={x.bill.legSession}
+                  billIsTracked={x.dashboardId ? true : false}
                   billAdd={addBillToDashboard}
                 />
               </div>
