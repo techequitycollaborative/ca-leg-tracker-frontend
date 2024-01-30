@@ -12,7 +12,7 @@ const Page = async ({}) => {
   const dashboards = await repositories.dashboardRepository.list({limit: 20});
 
   return (
-    <div>
+    <div className="bg-gray-300 w-1/2 m-auto py-1 mt-8">
       <h3 className="font-bold text-lg mb-2 mt-10 text-center">Please log in</h3>
       <div className="text-center mb-10">
         <Login

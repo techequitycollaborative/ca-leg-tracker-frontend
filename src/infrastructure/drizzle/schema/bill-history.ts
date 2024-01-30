@@ -16,6 +16,8 @@ export const billHistory = dbSchema.table(
         billId: integer('bill_id'),
         eventDate: date('event_date'),
         eventText: text('event_text'),
+        chamberId: text('chamber_id'),
+        historyOrder: text('history_order'),
     }
 )
 

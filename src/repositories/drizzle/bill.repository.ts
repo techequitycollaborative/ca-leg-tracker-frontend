@@ -20,7 +20,7 @@ import { committee, Committee } from "@/infrastructure/drizzle/schema/committee"
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
 import { db } from "@/infrastructure/drizzle";
-import { desc, eq, sql, and } from 'drizzle-orm';
+import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
 
   export interface EnrichedBill {
     bill: Bill;
@@ -28,6 +28,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
     billLatest: BillLatestActions;
     orgPosition: OrgPosition;
     assignedUser: User;
+    committee: Committee;
   }
 
   export class BillRepository
@@ -49,7 +50,8 @@ import { desc, eq, sql, and } from 'drizzle-orm';
           billDetails: billDetails,
           billLatest: billLatestActions,
           orgPosition: orgPosition,
-          assignedUser: user
+          assignedUser: user,
+          committee: committee
         })
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
@@ -57,6 +59,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
+        .leftJoin(committee, eq(bill.committeeId, committee.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
         .catch((e) => {
           console.log(e);
@@ -68,6 +71,73 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return itemsData
     }
 
+    public async searchBillsWithDashboardStatus(dashboardId: number, searchString: string | undefined, limit: number): Promise<Bill[] | null> {
+      const dbSearchString = (searchString === undefined ? '%' : '%' + searchString + '%');
+
+      const itemsData = (await db
+        .select({
+          bill: bill,
+          dashboardId: billDashboard.dashboardId
+        })
+        .from(this.table)
+        .leftJoin(billDashboard, and(eq(bill.billId, billDashboard.billId),eq(billDashboard.dashboardId, dashboardId),eq(billDashboard.hidden, false)))
+        .where(or(ilike(bill.billNumber, dbSearchString),ilike(bill.fullText, dbSearchString),ilike(bill.author, dbSearchString),ilike(bill.billName, dbSearchString)))
+        .orderBy(bill.billNumber)
+        .limit(limit)
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getDashboardBillSchedule(dashboardId: number, startDate: string): Promise<BillSchedule[] | null> {
+     const itemsData = (await db
+        .select({
+          billNumber: bill.billNumber,
+          billSchedule: billSchedule
+        })
+        .from(billSchedule)
+        .innerJoin(bill, eq(bill.billId, billSchedule.billId))
+        .innerJoin(billDashboard, eq(bill.billId, billDashboard.billId))
+        .where(and(eq(billDashboard.hidden, false),eq(billDashboard.dashboardId, dashboardId),gt(billSchedule.eventDate, startDate)))
+        .orderBy(billSchedule.eventDate)
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getDashboardUserActions(dashboardId: number, startDate: string): Promise<UserAction[] | null> {
+     const itemsData = (await db
+        .select({
+          billId: bill.billId,
+          billNumber: bill.billNumber,
+          text: userActionType.userActionTypeName,
+          date: userAction.dueDate,
+        })
+        .from(userAction)
+        .innerJoin(userActionType, eq(userAction.userActionTypeId, userActionType.userActionTypeId))
+        .innerJoin(billDashboard, eq(userAction.billDashboardId, billDashboard.billDashboardId))
+        .innerJoin(bill, eq(bill.billId, billDashboard.billId))
+        .where(and(eq(billDashboard.hidden, false),eq(billDashboard.dashboardId, dashboardId),gt(userAction.dueDate, startDate)))
+        .orderBy(userAction.dueDate)
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
 
 
     // Single bill history, details, discussion, and actions
@@ -79,7 +149,8 @@ import { desc, eq, sql, and } from 'drizzle-orm';
           billDetails: billDetails,
           billLatest: billLatestActions,
           orgPosition: orgPosition,
-          assignedUser: user
+          assignedUser: user,
+          committee: committee
         })
         .from(this.table)
         .innerJoin(billDashboard, eq(billDashboard.billId, bill.billId))
@@ -87,6 +158,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .leftJoin(billLatestActions, and(eq(billLatestActions.billId, bill.billId), eq(billLatestActions.dashboardId, dashboardId)))
         .leftJoin(orgPosition, eq(billDetails.orgPositionId, orgPosition.orgPositionId))
         .leftJoin(user, eq(billDetails.assignedUserId, user.userId))
+        .leftJoin(committee, eq(bill.committeeId, committee.committeeId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(bill.billId, billId)))
         .catch((e) => {
           console.log(e);
@@ -98,7 +170,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
       return item[0];
     }
 
-    public async getBillDashboardId(billId: number, dashboardId: number): Promise<number | null> {
+    public async getBillDashboard(billId: number, dashboardId: number): Promise<BillDashboard | null> {
       const item = (await db
         .select()
         .from(billDashboard)
@@ -111,7 +183,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         return null;
       }
       else {
-        return item[0].billDashboardId;
+        return item[0];
       }
     }
 
@@ -120,7 +192,7 @@ import { desc, eq, sql, and } from 'drizzle-orm';
         .select()
         .from(billHistory)
         .where(eq(billHistory.billId, billId))
-        .orderBy(desc(billHistory.eventDate),desc(billHistory.billHistoryId))
+        .orderBy(desc(billHistory.historyOrder))
         .catch((e) => {
           console.log(e);
         })) as BillHistory[] | null;

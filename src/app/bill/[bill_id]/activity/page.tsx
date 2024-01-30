@@ -11,17 +11,17 @@ import EditUserAction from '@/components/forms/user-action';
 const Page = async ({ params }: PageProps) => {
   const dashboardId = (await getDashboard()).dashboardId;
   const { bill_id } = params;
-  const billDashboardId = await repositories.billRepository.getBillDashboardId(parseInt(bill_id), dashboardId);
+  const billDashboard = (await repositories.billRepository.getBillDashboard(parseInt(bill_id), dashboardId));
   const bill = await repositories.billRepository.getById(bill_id);
   const billHistory = await repositories.billRepository.getBillHistoryByBillId(parseInt(bill_id));
   const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
   const billActions = await repositories.billRepository.getBillActions(parseInt(bill_id), dashboardId);
 
-  const userList = await repositories.userRepository.list({limit: 20});
-  const userActionTypeList = await repositories.userActionTypeRepository.list({limit: 20});
-  const userActionStatusList = await repositories.userActionStatusRepository.list({limit: 20});
-  const legislatorList = await repositories.legislatorRepository.list({limit: 20});
-  const committeeList = await repositories.committeeRepository.list({limit: 20});
+  const userList = await repositories.userRepository.list({limit: 100});
+  const userActionTypeList = await repositories.userActionTypeRepository.list({limit: 100});
+  const userActionStatusList = await repositories.userActionStatusRepository.list({limit: 100});
+  const legislatorList = await repositories.legislatorRepository.list({limit: 100});
+  const committeeList = await repositories.committeeRepository.list({limit: 100});
 
   return (
     <>
@@ -35,7 +35,7 @@ const Page = async ({ params }: PageProps) => {
             <EditUserAction
               isNew={true}
               submit={saveUserAction}
-              billDashboardId={billDashboardId}
+              billDashboardId={billDashboard?.billDashboardId}
               userAction={null}
               userList={userList}
               userActionTypeList={userActionTypeList}
@@ -72,7 +72,7 @@ const Page = async ({ params }: PageProps) => {
           {billSchedule &&
             billSchedule.map((x: any, i: any) => (
               <div key={i}>
-                <p>{x.eventDate}: {x.eventText}</p>
+                <p>{new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' })}: {x.eventText}</p>
               </div>
             ))}
         </div>
@@ -81,7 +81,7 @@ const Page = async ({ params }: PageProps) => {
           {billHistory &&
             billHistory.map((x: any, i: any) => (
               <div key={i}>
-                <p>{x.eventDate}: {x.eventText}</p>
+                <p className="mb-1">{new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' })}: {x.eventText}</p>
               </div>
             ))}
         </div>

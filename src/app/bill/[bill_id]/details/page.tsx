@@ -14,10 +14,10 @@ const Page = async ({ params }: PageProps) => {
   const issues = await repositories.billRepository.getBillIssues(parseInt(bill_id), dashboardId);
   const sponsors = await repositories.billRepository.getBillCommunitySponsors(parseInt(bill_id), dashboardId);
 
-  const orgPositionList = await repositories.orgPositionRepository.list({limit: 20});
-  const issueList = await repositories.issueRepository.list({limit: 20});
-  const communityOrgList = await repositories.communityOrgRepository.list({limit: 20});
-  const userList = await repositories.userRepository.list({limit: 20});
+  const orgPositionList = await repositories.orgPositionRepository.list({limit: 100});
+  const issueList = await repositories.issueRepository.list({limit: 100});
+  const communityOrgList = await repositories.communityOrgRepository.list({limit: 100});
+  const userList = await repositories.userRepository.list({limit: 100});
   
   return (
     <>
@@ -73,12 +73,12 @@ const Page = async ({ params }: PageProps) => {
       <div className="mt-4">
         <p><span className="font-bold">Measure:</span> {bill?.bill.billNumber}</p>
         <p><span className="font-bold">Topic:</span> {bill?.bill.billName}</p>
-        <p><span className="font-bold">Lead Author:</span> {bill?.bill.author}</p>
-        <p><span className="font-bold">Coauthors:</span> {bill?.bill.coauthors}</p>
+        <p><span className="font-bold">Author:</span> {bill?.bill.author}</p>
+        <p><span className="font-bold">Principal Coauthors:</span> {bill?.bill.coauthors}</p>
         <p><span className="font-bold">Title:</span> {bill?.bill.billName}</p>
-        <p><span className="font-bold">House Location:</span> [last action house]</p>
-        <p><span className="font-bold">Introduced Date:</span> [date]</p>
-        <p><span className="font-bold">Committee Location:</span> [last action committee]</p>
+        <p><span className="font-bold">House Location:</span> {bill?.billLatest.lastChamber}</p>
+        <p><span className="font-bold">Introduced Date:</span> {new Date(bill?.billLatest.firstDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p><span className="font-bold">Excerpt:</span> {bill?.bill.fullText?.slice(0,500).replace(/\\n/g, ' ') + ' ...'}</p>
       </div>
     </>
   );

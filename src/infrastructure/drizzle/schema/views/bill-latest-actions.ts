@@ -14,8 +14,10 @@ export const billLatestActions = dbSchema.table(
     {
         billId: integer('bill_id'),
         dashboardId: integer('dashboard_id'),
+        firstDate: date('first_date'),
         lastDate: date('last_date'),
         lastText: text('last_text'),
+        lastChamber: text('last_chamber'),
         nextDate: date('next_date'),
         nextText: text('next_text'),
         userDate: date('user_date'),

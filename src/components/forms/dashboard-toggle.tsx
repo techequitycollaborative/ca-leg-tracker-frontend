@@ -6,7 +6,7 @@ export function BillDashboardAdd({ submit, dashboardId, billId } : any) {
     <form action={submit} onSubmit={onSubmit}>
       <input type="hidden" id="dashboardId" name="dashboardId" value={dashboardId} />
       <input type="hidden" id="billId" name="billId" value={billId} />
-      <Button type="submit">+ Add to dashboard</Button>
+      <Button className="whitespace-nowrap" type="submit">+ Add to dashboard</Button>
     </form>
   );
 }

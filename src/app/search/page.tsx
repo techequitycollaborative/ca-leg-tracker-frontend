@@ -7,26 +7,32 @@ import { repositories } from '@/repositories/index';
 import { addBillToDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
-const Page = async ({}) => {
-  const dashboardId = (await getDashboard()).dashboardId;
-  const bills = await repositories.billRepository.list({limit: 20});
+const Page = async ({ searchParams }: any) => {
+  const dashboard = await getDashboard();
+  const searchTerms = searchParams?.s as string;
+  let bills = await repositories.billRepository.searchBillsWithDashboardStatus(dashboard.dashboardId, searchTerms, 100);
 
   return (
     <>
       <div>
-        <ListSearchBar />
-        <ListNav />
+        <ListSearchBar
+          searchTerms={searchTerms}
+        />
+        {/* bill sort and filters */}
         <div className="m-2">
           {bills &&
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <ListItem
-                  dashboardId={dashboardId}
-                  billId={x.billId}
-                  billNumber={x.billNumber}
-                  billName={x.billName}
-                  billLatest="[last activity]"
-                  billSession={x.legSession}
+                  dashboard={dashboard}
+                  billId={x.bill.billId}
+                  billNumber={x.bill.billNumber}
+                  billName={x.bill.billName}
+                  billAuthor={x.bill.author}
+                  billLink={x.bill.leginfoLink}
+                  billExcerpt={x.bill.fullText?.slice(0,300).replace(/\\n/g, ' ') + ' ...'}
+                  billSession={x.bill.legSession}
+                  billIsTracked={x.dashboardId ? true : false}
                   billAdd={addBillToDashboard}
                 />
               </div>

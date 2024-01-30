@@ -7,19 +7,19 @@ import { removeBillFromDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
 const Page = async ({}) => {
-  const dashboardId = (await getDashboard()).dashboardId;
-  const bills = await repositories.billRepository.listEnrichedBills(dashboardId);
+  const dashboard = await getDashboard();
+  const bills = await repositories.billRepository.listEnrichedBills(dashboard.dashboardId);
 
   return (
     <>
       <div>
-        <ListNav />
+        {/* bill sort and filters */}
         <div className="m-2">
           {bills &&
             bills.map((x: any, i: any) => (
               <div key={i}>
                 <DashboardListItem
-                  dashboardId={dashboardId}
+                  dashboard={dashboard}
                   billId={x.bill.billId}
                   billNumber={x.bill.billNumber}
                   billName={x.bill.billName}
@@ -28,9 +28,7 @@ const Page = async ({}) => {
                   billUpcoming={x.billLatest.nextText}
                   billLastAction={x.billLatest.userText}
                   billSession={x.bill.legSession}
-                  billPosition={x.orgPosition == null ? "Unknown" : x.orgPosition.orgPositionName}
-                  billIssues="[issues]"
-                  billCommittee="[committee]"
+                  billPosition={x.orgPosition?.orgPositionName}
                   billLink={x.bill.leginfoLink}
                   billRemove={removeBillFromDashboard}
                 />
