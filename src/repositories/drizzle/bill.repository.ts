@@ -20,7 +20,7 @@ import { committee, Committee } from "@/infrastructure/drizzle/schema/committee"
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
 import { db } from "@/infrastructure/drizzle";
-import { desc, eq, sql, and, or, ilike } from 'drizzle-orm';
+import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
 
   export interface EnrichedBill {
     bill: Bill;
@@ -94,6 +94,50 @@ import { desc, eq, sql, and, or, ilike } from 'drizzle-orm';
       return itemsData
     }
 
+    public async getDashboardBillSchedule(dashboardId: number, startDate: string): Promise<BillSchedule[] | null> {
+     const itemsData = (await db
+        .select({
+          billNumber: bill.billNumber,
+          billSchedule: billSchedule
+        })
+        .from(billSchedule)
+        .innerJoin(bill, eq(bill.billId, billSchedule.billId))
+        .innerJoin(billDashboard, eq(bill.billId, billDashboard.billId))
+        .where(and(eq(billDashboard.hidden, false),eq(billDashboard.dashboardId, dashboardId),gt(billSchedule.eventDate, startDate)))
+        .orderBy(billSchedule.eventDate)
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getDashboardUserActions(dashboardId: number, startDate: string): Promise<UserAction[] | null> {
+     const itemsData = (await db
+        .select({
+          billId: bill.billId,
+          billNumber: bill.billNumber,
+          text: userActionType.userActionTypeName,
+          date: userAction.dueDate,
+        })
+        .from(userAction)
+        .innerJoin(userActionType, eq(userAction.userActionTypeId, userActionType.userActionTypeId))
+        .innerJoin(billDashboard, eq(userAction.billDashboardId, billDashboard.billDashboardId))
+        .innerJoin(bill, eq(bill.billId, billDashboard.billId))
+        .where(and(eq(billDashboard.hidden, false),eq(billDashboard.dashboardId, dashboardId),gt(userAction.dueDate, startDate)))
+        .orderBy(userAction.dueDate)
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
 
 
     // Single bill history, details, discussion, and actions
