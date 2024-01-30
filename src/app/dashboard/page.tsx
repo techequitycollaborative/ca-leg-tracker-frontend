@@ -29,7 +29,6 @@ const Page = async ({}) => {
                   billLastAction={x.billLatest.userText}
                   billSession={x.bill.legSession}
                   billPosition={x.orgPosition?.orgPositionName}
-                  billCommittee={x.committee?.name}
                   billLink={x.bill.leginfoLink}
                   billRemove={removeBillFromDashboard}
                 />

@@ -23,7 +23,6 @@ interface ListItemProps extends Props {
 interface DashboardListItemProps extends Props {
   billCustomName: string;
   billPosition: string | null;
-  billCommittee: string | null;
   billLastAction: string;
   billLatest: string;
   billUpcoming: string;
@@ -95,7 +94,6 @@ export const DashboardListItem: NextPage<DashboardListItemProps> = function Dash
           </div>
           <div className="mt-2 flex">
             <p className="">Org Position: {props.billPosition ? props.billPosition : (<span className="italic">none set</span>)}</p>
-            <p className="ml-4">Committee: {props.billCommittee ? props.billCommittee : (<span className="italic">unknown</span>)}</p>
           </div>
         </div>
         <div className="ml-auto flex z-10">
