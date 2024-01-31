@@ -2,7 +2,7 @@
 import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from 'next/navigation';
 
 interface Props {
   dashboardName: string;
@@ -11,6 +11,7 @@ interface Props {
 
 const Navbar: NextPage<Props> = function Navbar(props) {
   const pathName = usePathname();
+  const router = useRouter();
 
   return (
     <div className="w-full flex border-b border-gray-300 px-4 py-2">
@@ -33,7 +34,7 @@ const Navbar: NextPage<Props> = function Navbar(props) {
               <p>Dashboard: <span className="font-bold">{props.dashboardName}</span></p>
             </div>  
           <p className="mr-4 pt-3"><Link href="/settings">Settings</Link></p>
-          <p className="mr-4 pt-3"><Link href="/logout">Logout</Link></p>
+          <p className="mr-4 pt-3"><button onClick={() => router.push("/logout")}>Logout</button></p>
         </div>
       </>
       )}
