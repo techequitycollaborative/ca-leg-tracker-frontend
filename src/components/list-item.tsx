@@ -54,7 +54,7 @@ export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
         </div>
         <div className="ml-auto">
         {props.billIsTracked ? (
-          <p className="mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{props.dashboard.dashboardName}</span></p>
+          <p className="whitespace-nowrap mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{props.dashboard.dashboardName}</span></p>
           ) : (
           <>
             <p className="whitespace-nowrap">Session: {props.billSession}</p>

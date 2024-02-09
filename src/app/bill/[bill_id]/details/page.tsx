@@ -17,7 +17,7 @@ const Page = async ({ params }: PageProps) => {
   const orgPositionList = await repositories.orgPositionRepository.list({limit: 100});
   const issueList = await repositories.issueRepository.list({limit: 100});
   const communityOrgList = await repositories.communityOrgRepository.list({limit: 100});
-  const userList = await repositories.userRepository.list({limit: 100});
+  const userList = await repositories.userRepository.list();
   
   return (
     <>
