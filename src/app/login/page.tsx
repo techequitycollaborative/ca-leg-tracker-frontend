@@ -8,7 +8,7 @@ import { repositories } from '@/repositories/index';
 
 
 const Page = async ({}) => {
-  const users = await repositories.userRepository.list({ limit: 20 });
+  const users = await repositories.userRepository.list();
   const dashboards = await repositories.dashboardRepository.list({limit: 20});
 
   return (

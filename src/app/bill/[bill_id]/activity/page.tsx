@@ -17,7 +17,7 @@ const Page = async ({ params }: PageProps) => {
   const billSchedule = await repositories.billRepository.getBillScheduleByBillId(parseInt(bill_id));
   const billActions = await repositories.billRepository.getBillActions(parseInt(bill_id), dashboardId);
 
-  const userList = await repositories.userRepository.list({limit: 100});
+  const userList = await repositories.userRepository.list();
   const userActionTypeList = await repositories.userActionTypeRepository.list({limit: 100});
   const userActionStatusList = await repositories.userActionStatusRepository.list({limit: 100});
   const legislatorList = await repositories.legislatorRepository.list({limit: 100});

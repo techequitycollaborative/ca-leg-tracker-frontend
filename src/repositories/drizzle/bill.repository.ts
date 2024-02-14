@@ -16,6 +16,8 @@ import { billCommunitySponsor, BillCommunitySponsor } from "@/infrastructure/dri
 import { communityOrg, CommunityOrg } from "@/infrastructure/drizzle/schema/community-org";
 import { legislator, Legislator } from "@/infrastructure/drizzle/schema/legislator";
 import { committee, Committee } from "@/infrastructure/drizzle/schema/committee";
+import { chamberVoteResult, ChamberVoteResult } from "@/infrastructure/drizzle/schema/chamber-vote-result";
+import { chamber, Chamber } from "@/infrastructure/drizzle/schema/chamber";
 
 import { BaseRepository } from "./base.repository";
 import { IBill, IBillRepository } from "definitions/bill.repository";
@@ -140,7 +142,7 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
     }
 
 
-    // Single bill history, details, discussion, and actions
+    // Single bill history, details, discussion, actions, and votes
 
     public async getEnrichedBillById(billId: number, dashboardId: number): Promise<EnrichedBill | null> {
       const item = (await db
@@ -291,6 +293,26 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
         .innerJoin(communityOrg, eq(communityOrg.communityOrgId, billCommunitySponsor.communityOrgId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
+        .catch((e) => {
+          console.log(e);
+        })) as any;
+
+      if (!itemsData || itemsData.length < 1) {
+        return null;
+      }
+      return itemsData
+    }
+
+    public async getBillVotes(billId: number): Promise<ChamberVoteResult[] | null> {
+      const itemsData = (await db
+        .select({
+          vote: chamberVoteResult,
+          chamber: chamber
+        })
+        .from(chamberVoteResult)
+        .innerJoin(chamber, eq(chamber.chamberId, chamberVoteResult.chamberId))
+        .where(eq(chamberVoteResult.billId, billId))
+        .orderBy(desc(chamberVoteResult.voteDate))
         .catch((e) => {
           console.log(e);
         })) as any;
