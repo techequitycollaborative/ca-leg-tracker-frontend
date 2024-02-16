@@ -7,6 +7,22 @@ import { Button } from '@/components/ui/button';
 import { getDashboard } from 'lib/session';
 import { saveUserAction } from 'app/actions';
 import EditUserAction from '@/components/forms/user-action';
+import { UserAction } from "@/infrastructure/drizzle/schema/user-action";
+import UserHistoryListItem from '@/components/user-history-list-item';
+
+interface ScheduleEntry {
+  date: Date;
+  dateString: string;
+  text: string;
+  isUserAction: boolean,
+  details: {
+    userAction: UserAction;
+    userActionTypeName: string;
+    userActionStatusName: string;
+    legislatorName: string;
+    committeeName: string;
+  } | null;
+}
 
 const Page = async ({ params }: PageProps) => {
   const dashboardId = (await getDashboard()).dashboardId;
@@ -22,6 +38,79 @@ const Page = async ({ params }: PageProps) => {
   const userActionStatusList = await repositories.userActionStatusRepository.list({limit: 100});
   const legislatorList = await repositories.legislatorRepository.list({limit: 100});
   const committeeList = await repositories.committeeRepository.list({limit: 100});
+
+  let billFullUpcoming: ScheduleEntry[] = [];
+  let billFullHistory: ScheduleEntry[] = [];
+
+  billHistory && billHistory.map((x: any, i: any) => {
+    const entry = {
+      date: new Date(x.eventDate),
+      dateString: new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' }),
+      text: x.eventText,
+      isUserAction: false,
+      details: null,
+    }
+    billFullHistory.push(entry);
+  });
+
+  billSchedule && billSchedule.map((x: any, i: any) => {
+    const entry = {
+      date: new Date(x.eventDate),
+      dateString: new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' }),
+      text: x.eventText,
+      isUserAction: false,
+      details: null,
+    }
+    billFullUpcoming.push(entry);
+  });
+
+  const today = new Date();
+  billActions && billActions.map((x: any, i: any) => {
+    const entry = {
+      date: new Date(x.userAction.dueDate),
+      dateString: new Date(x.userAction.dueDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' }),
+      text: x.userAction.notes,
+      isUserAction: true,
+      details: {
+        userAction: x.userAction,
+        userActionTypeName: x.userActionTypeName,
+        userActionStatusName: x.userActionStatusName,
+        legislatorName: x.legislatorName,
+        committeeName: x.committeeName,
+      },
+    }
+
+    if (today > entry.date) {
+      billFullHistory.push(entry);
+    }
+    else {
+      billFullUpcoming.push(entry);
+    }
+  });
+
+  const billFullUpcomingSorted = billFullUpcoming.sort((a,b) => a['date'].valueOf() - b['date'].valueOf());
+  const billFullHistorySorted = billFullHistory.sort((a,b) => b['date'].valueOf() - a['date'].valueOf());
+
+  function formatHistoryEntry(x: ScheduleEntry) {
+    if (x.isUserAction && x.details != null) {
+      return (
+        <UserHistoryListItem
+          date={x.dateString}
+          title={x.details.userActionTypeName}
+          status={x.details.userActionStatusName}
+          legislator={x.details.legislatorName}
+          committee={x.details.committeeName}
+          link={x.details.userAction.link}
+          notes={x.details.userAction.notes}
+        />
+      );
+    }
+    else {
+      return (
+        <p className="mb-1">{x.dateString}: {x.text}</p>
+      );
+    }
+  }
 
   return (
     <>
@@ -69,21 +158,19 @@ const Page = async ({ params }: PageProps) => {
         <h3 className="font-bold text-lg">Schedule</h3>
         <div className="mt-2">
           <p className="font-bold">Upcoming</p>
-          {billSchedule &&
-            billSchedule.map((x: any, i: any) => (
-              <div key={i}>
-                <p>{new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' })}: {x.eventText}</p>
-              </div>
-            ))}
+          {billFullUpcomingSorted.map((x: any, i: any) => (
+            <div key={i}>
+              {formatHistoryEntry(x)}
+            </div>
+          ))}
         </div>
         <div className="mt-2">
           <p className="font-bold">History</p>
-          {billHistory &&
-            billHistory.map((x: any, i: any) => (
-              <div key={i}>
-                <p className="mb-1">{new Date(x.eventDate + 'T00:00:00').toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric' })}: {x.eventText}</p>
-              </div>
-            ))}
+          {billFullHistorySorted.map((x: any, i: any) => (
+            <div key={i}>
+              {formatHistoryEntry(x)}
+            </div>
+          ))}
         </div>
       </div>
     </>
