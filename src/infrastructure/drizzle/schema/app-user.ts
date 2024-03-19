@@ -13,6 +13,7 @@ export const user = dbSchema.table(
     {
         userId: integer('user_id').primaryKey(),
         userName: text('user_name'),
+        userAccessLevel: text('user_access_level'),
     }
 )
 

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { BillDashboardAdd, BillDashboardRemove } from '@/components/forms/dashboard-toggle';
+import AccessControlledComponent from '@/components/access-controlled-component';
 
 interface Props {
   dashboard: {dashboardId: number; dashboardName: string;};
@@ -29,6 +30,28 @@ interface DashboardListItemProps extends Props {
   billRemove: (formData: FormData) => Promise<void>;
 }
 
+function billDashboardAdd(props: ListItemProps) {
+  return (
+    <BillDashboardAdd
+      submit={props.billAdd}
+      dashboardId={props.dashboard.dashboardId}
+      billId={props.billId}
+    />
+  );
+}
+
+function billDashboardRemove(props: DashboardListItemProps) {
+  return (
+    <div className="text-right ml-2 hover:opacity-70">
+      <BillDashboardRemove
+        submit={props.billRemove}
+        dashboardId={props.dashboard.dashboardId}
+        billId={props.billId}
+      />
+    </div>
+  );
+}
+
 export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
   return (
     <div className="relative">
@@ -53,15 +76,15 @@ export const ListItem: NextPage<ListItemProps> = function ListItem(props) {
           <p className="text-sm text-gray-600"><span className="uppercase">Excerpt:</span> {props.billExcerpt}</p>
         </div>
         <div className="ml-auto">
+          <p className="whitespace-nowrap text-right">Session: {props.billSession}</p>
         {props.billIsTracked ? (
           <p className="whitespace-nowrap mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{props.dashboard.dashboardName}</span></p>
           ) : (
           <>
-            <p className="whitespace-nowrap">Session: {props.billSession}</p>
-            <BillDashboardAdd
-              submit={props.billAdd}
-              dashboardId={props.dashboard.dashboardId}
-              billId={props.billId}
+            {/* @ts-expect-error Server Component */}
+            <AccessControlledComponent
+              viewerRender={(<></>) as any}
+              editorRender={billDashboardAdd(props) as any}
             />
           </>
         )}
@@ -98,13 +121,11 @@ export const DashboardListItem: NextPage<DashboardListItemProps> = function Dash
         </div>
         <div className="ml-auto flex z-10">
           <p className="mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{props.dashboard.dashboardName}</span></p>
-          <div className="text-right ml-2 hover:opacity-70">
-            <BillDashboardRemove
-              submit={props.billRemove}
-              dashboardId={props.dashboard.dashboardId}
-              billId={props.billId}
-            />
-          </div>
+          {/* @ts-expect-error Server Component */}
+          <AccessControlledComponent
+            viewerRender={(<></>) as any}
+            editorRender={billDashboardRemove(props) as any}
+          />
         </div>
       </div>
     </div>

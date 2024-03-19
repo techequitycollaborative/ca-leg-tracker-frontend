@@ -2,6 +2,7 @@
 import { repositories } from '@/repositories/index';
 import { login } from 'lib/session';
 import { redirect } from 'next/navigation'
+import { UserAccessLevel } from 'lib/session';
 
 export async function saveDiscussionComment(formData: FormData) {
   await repositories.billRepository.saveDiscussionComment(
@@ -59,7 +60,7 @@ export async function saveUserAction(formData: FormData) {
 
 export async function saveLogin(formData: FormData) {
   await login(
-    {userId: parseInt(formData.get('userId') as string), userName: formData.get('userName') as string},
+    {userId: parseInt(formData.get('userId') as string), userName: formData.get('userName') as string, userAccessLevel: formData.get('userAccessLevel') as UserAccessLevel},
     {dashboardId: parseInt(formData.get('dashboardId') as string), dashboardName: formData.get('dashboardName') as string}
   );
   redirect('/dashboard');
