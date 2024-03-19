@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { saveBillDetails } from 'app/actions';
 import { getDashboard } from 'lib/session';
 import BillDetails from '@/components/forms/bill-details';
+import AccessControlledComponent from '@/components/access-controlled-component';
 
 const Page = async ({ params }: PageProps) => {
   const dashboardId = (await getDashboard()).dashboardId;
@@ -18,12 +19,9 @@ const Page = async ({ params }: PageProps) => {
   const issueList = await repositories.issueRepository.list({limit: 100});
   const communityOrgList = await repositories.communityOrgRepository.list({limit: 100});
   const userList = await repositories.userRepository.list();
-  
-  return (
-    <>
-      <BillNav
-        current="details"
-      />
+
+  function editableDetails() {
+    return (
       <div className="flex flex-row flex-wrap border border-gray-500 rounded-xl p-4 mt-4">
         <p className="w-1/3 font-bold">Alternate name:</p>
         <p className="w-2/3">{bill?.billDetails?.alternateName}</p>
@@ -70,7 +68,36 @@ const Page = async ({ params }: PageProps) => {
           userList={userList}
         />
       </div>
+    );
+  }
+
+  return (
+    <>
+      <BillNav
+        current="details"
+      />
+      {/* @ts-expect-error Server Component */}
+      <AccessControlledComponent
+        viewerRender={(<></>) as any}
+        editorRender={editableDetails() as any}
+      />
       <div className="mt-4">
+        {/* @ts-expect-error Server Component */}
+        <AccessControlledComponent
+          viewerRender={(
+            <>
+              <p><span className="font-bold">Alternate Name:</span> {bill?.billDetails?.alternateName}</p>
+              <p>
+                <span className="font-bold">Community Sponsor: </span>
+                {sponsors &&
+                  sponsors.map((x: any, i: any) => (
+                    <span key={i}>{(i > 0 ? " | " : "") + x.communityOrgName}</span>
+                ))}
+              </p>
+            </>
+          ) as any}
+          editorRender={(<></>) as any}
+        />
         <p><span className="font-bold">Measure:</span> {bill?.bill.billNumber}</p>
         <p><span className="font-bold">Topic:</span> {bill?.bill.billName}</p>
         <p><span className="font-bold">Author:</span> {bill?.bill.author}</p>

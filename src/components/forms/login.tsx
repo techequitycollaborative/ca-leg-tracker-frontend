@@ -5,6 +5,7 @@ import { useState } from 'react';
 export default function Login({ submit, users, dashboards } : any) {
   const [userId, setUserId] = useState(users[0].userId);
   const [userName, setUserName] = useState(users[0].userName);
+  const [userAccessLevel, setUserAccessLevel] = useState(users[0].userAccessLevel);
   const [dashboardId, setDashboardId] = useState(dashboards[0].dashboardId);
   const [dashboardName, setDashboardName] = useState(dashboards[0].dashboardName);
 
@@ -15,6 +16,7 @@ export default function Login({ submit, users, dashboards } : any) {
     users.map((x: any, i: any) => {
       if (x.userId == userId) {
         setUserName(x.userName);
+        setUserAccessLevel(x.userAccessLevel);
       }
     });
   }
@@ -34,6 +36,7 @@ export default function Login({ submit, users, dashboards } : any) {
     <form action={submit}>
       <input type="hidden" id="dashboardName" name="dashboardName" value={dashboardName} />
       <input type="hidden" id="userName" name="userName" value={userName} />
+      <input type="hidden" id="userName" name="userAccessLevel" value={userAccessLevel} />
       <div className="flex w-1/2 mx-auto my-2">
         <p className="w-1/3 pt-1 mr-6 text-lg text-right">Dashboard:</p>
         <select

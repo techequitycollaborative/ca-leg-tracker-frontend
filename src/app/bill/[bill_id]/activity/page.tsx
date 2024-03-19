@@ -9,6 +9,7 @@ import { saveUserAction } from 'app/actions';
 import EditUserAction from '@/components/forms/user-action';
 import { UserAction } from "@/infrastructure/drizzle/schema/user-action";
 import UserHistoryListItem from '@/components/user-history-list-item';
+import AccessControlledComponent from '@/components/access-controlled-component';
 
 interface ScheduleEntry {
   date: Date;
@@ -112,11 +113,8 @@ const Page = async ({ params }: PageProps) => {
     }
   }
 
-  return (
-    <>
-      <BillNav
-        current="activity"
-      />
+  function userActions() {
+    return (
       <div className="border border-gray-500 rounded-xl p-4 mt-4">
         <div className="flex">
           <h3 className="font-bold text-lg">Our Actions</h3>
@@ -154,7 +152,20 @@ const Page = async ({ params }: PageProps) => {
           ))}
         </div>
       </div>
+    );
+  }
+
+  return (
+    <>
+      <BillNav
+        current="activity"
+      />
       <div className="mt-4">
+        {/* @ts-expect-error Server Component */}
+        <AccessControlledComponent
+          viewerRender={(<></>) as any}
+          editorRender={userActions() as any}
+        />
         <h3 className="font-bold text-lg">Schedule</h3>
         <div className="mt-2">
           <p className="font-bold">Upcoming</p>

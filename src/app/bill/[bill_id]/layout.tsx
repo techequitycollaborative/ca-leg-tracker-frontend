@@ -6,6 +6,7 @@ import { PageLayoutProps } from '@/definitions/page.types.definitions';
 import { saveDiscussionComment, removeBillFromDashboard } from 'app/actions';
 import DiscussionComment from '@/components/forms/discussion-comment';
 import { BillDashboardRemove } from '@/components/forms/dashboard-toggle';
+import AccessControlledComponent from '@/components/access-controlled-component';
 
 import { getUser, getDashboard } from 'lib/session';
 
@@ -40,13 +41,19 @@ const Layout = async ({ params, children }: PageLayoutProps) => {
         </div>
         <div className="ml-auto flex">
           <p className="mt-2">Tracking in: <span className="bg-gray-400 px-4 py-2 rounded-full">{dashboard.dashboardName}</span></p>
-          <div className="text-right ml-2">
-            <BillDashboardRemove
-              submit={removeBillFromDashboard}
-              dashboardId={dashboard.dashboardId}
-              billId={billId}
-            />
-          </div>
+          {/* @ts-expect-error Server Component */}
+          <AccessControlledComponent
+            viewerRender={(<></>) as any}
+            editorRender={(
+              <div className="text-right ml-2">
+                <BillDashboardRemove
+                  submit={removeBillFromDashboard}
+                  dashboardId={dashboard.dashboardId}
+                  billId={billId}
+                />
+              </div>
+            ) as any}
+          />
         </div>
       </div>
       <div className="flex m-4">

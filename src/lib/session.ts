@@ -1,9 +1,15 @@
 import { cookies } from 'next/headers';
 import { getIronSession } from 'iron-session';
 
+export enum UserAccessLevel {
+  EDITOR = 'Editor',
+  VIEWER = 'Viewer',
+}
+
 export interface SessionUser {
   userId: number;
   userName: string;
+  userAccessLevel: UserAccessLevel;
 }
 
 export interface SessionDashboard {
