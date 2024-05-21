@@ -17,4 +17,4 @@ export const priorityTier = dbSchema.table(
 )
 
 export type PriorityTier = InferSelectModel<typeof priorityTier>;
-export type NewPriorityTier = InferInsertModel<typeof PriorityTier>;
+export type NewPriorityTier = InferInsertModel<typeof priorityTier>;

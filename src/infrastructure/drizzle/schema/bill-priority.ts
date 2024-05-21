@@ -18,4 +18,4 @@ export const billPriority = dbSchema.table(
 )
 
 export type BillPriority = InferSelectModel<typeof billPriority>;
-export type NewBillPriority = InferInsertModel<typeof BillPriority>;
+export type NewBillPriority = InferInsertModel<typeof billPriority>;

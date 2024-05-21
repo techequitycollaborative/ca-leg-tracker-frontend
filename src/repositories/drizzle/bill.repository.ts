@@ -285,13 +285,13 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
       return itemsData
     }
 
-    public async getBillPriorityTier(billId: number, dashboardId: number): Promise<PriorityDescription[] | null> {
+    public async getBillPriorityTier(billId: number, dashboardId: number): Promise<PriorityTier[] | null> {
       const itemsData = (await db
         .select({priorityId: priorityTier.priorityId, priorityDescription: priorityTier.priorityDescription})
         .from(billPriority)
         .innerJoin(billDetails, eq(billPriority.billDetailsId, billDetails.billDetailsId))
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
-        .innerJoin(priorityTier, eq(priorityTier.priorityId, billPriority.priorityTierId))
+        .innerJoin(priorityTier, eq(priorityTier.priorityId, billPriority.priorityId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
         .catch((e) => {
           console.log(e);
