@@ -1,4 +1,4 @@
-import { CommunityOrg } from "@/infrastructure/drizzle/schema/priority-tier";
+import { PriorityTier } from "@/infrastructure/drizzle/schema/priority-tier";
 import { IBaseRepository } from "./base.repository";
 
 export interface IPriorityTier extends PriorityTier {}
