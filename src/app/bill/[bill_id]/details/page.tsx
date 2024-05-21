@@ -13,11 +13,11 @@ const Page = async ({ params }: PageProps) => {
   const { bill_id } = params;
   const bill = await repositories.billRepository.getEnrichedBillById(parseInt(bill_id), dashboardId);
   const issues = await repositories.billRepository.getBillIssues(parseInt(bill_id), dashboardId);
-  const sponsors = await repositories.billRepository.getBillCommunitySponsors(parseInt(bill_id), dashboardId);
+  const priorityTiers = await repositories.billRepository.getBillPriorityTier(parseInt(bill_id), dashboardId);
 
   const orgPositionList = await repositories.orgPositionRepository.list({limit: 100});
   const issueList = await repositories.issueRepository.list({limit: 100});
-  const communityOrgList = await repositories.communityOrgRepository.list({limit: 100});
+  const priorityTierList = await repositories.priorityTierRepository.list({limit: 100});
   const userList = await repositories.userRepository.list();
 
   function editableDetails() {
@@ -26,13 +26,7 @@ const Page = async ({ params }: PageProps) => {
         <p className="w-1/3 font-bold">Alternate name:</p>
         <p className="w-2/3">{bill?.billDetails?.alternateName}</p>
 
-        <p className="w-1/3 font-bold">Policy notes:</p>
-        <p className="w-2/3">{bill?.billDetails?.policyNotes}</p>
-
-        <p className="w-1/3 font-bold">Org position:</p>
-        <p className="w-2/3">{bill?.orgPosition?.orgPositionName}</p>
-
-        <p className="w-1/3 font-bold">Platform area:</p>
+        <p className="w-1/3 font-bold">Issue area:</p>
         <p className="w-2/3">
           {issues &&
             issues.map((x: any, i: any) => (
@@ -40,31 +34,43 @@ const Page = async ({ params }: PageProps) => {
           ))}
         </p>
 
-        <p className="w-1/3 font-bold">Community sponsor:</p>
+        <p className="w-1/3 font-bold">Assigned to:</p>
+        <p className="w-2/3">{bill?.assignedUser?.userName}</p>
+
+        <p className="w-1/3 font-bold">Org position:</p>
+        <p className="w-2/3">{bill?.orgPosition?.orgPositionName}</p>
+
+        <p className="w-1/3 font-bold">Priority tier:</p>
         <p className="w-2/3">
-          {sponsors &&
-            sponsors.map((x: any, i: any) => (
-              <span key={i}>{(i > 0 ? " | " : "") + x.communityOrgName}</span>
+          {priorityTiers &&
+            priorityTiers.map((x: any, i: any) => (
+              <span key={i}>{(i > 0 ? " | " : "") + x.priorityDescription}</span>
           ))}
         </p>
+
+        <p className="w-1/3 font-bold">Community sponsor:</p>
+        <p className="w-2/3">{bill?.billDetails?.communitySponsor}</p>
+
+        <p className="w-1/3 font-bold">Coalition:</p>
+        <p className="w-2/3">{bill?.billDetails?.coalition}</p>
 
         <p className="w-1/3 font-bold">Political intel:</p>
         <p className="w-2/3">{bill?.billDetails?.politicalIntel}</p>
 
-        <p className="w-1/3 font-bold">Assigned to:</p>
-        <p className="w-2/3">{bill?.assignedUser?.userName}</p>
+        <p className="w-1/3 font-bold">Policy notes:</p>
+        <p className="w-2/3">{bill?.billDetails?.policyNotes}</p>
 
         <div className="my-4 w-full border-b border-gray-500"></div>
         <BillDetails
           submit={saveBillDetails}
           billDetails={bill?.billDetails}
+          assignedUserId={bill?.assignedUser?.userId}
           positionId={bill?.orgPosition?.orgPositionId}
           issueId={issues == null ? null : issues[0].issueId}
-          sponsorId={sponsors == null ? null : sponsors[0].communityOrgId}
-          assignedUserId={bill?.assignedUser?.userId}
+          priorityId={priorityTiers == null ? null : priorityTiers[0].priorityId}
           positionList={orgPositionList}
           issueList={issueList}
-          sponsorList={communityOrgList}
+          priorityTierList={priorityTierList}
           userList={userList}
         />
       </div>
@@ -88,10 +94,10 @@ const Page = async ({ params }: PageProps) => {
             <>
               <p><span className="font-bold">Alternate Name:</span> {bill?.billDetails?.alternateName}</p>
               <p>
-                <span className="font-bold">Community Sponsor: </span>
-                {sponsors &&
-                  sponsors.map((x: any, i: any) => (
-                    <span key={i}>{(i > 0 ? " | " : "") + x.communityOrgName}</span>
+                <span className="font-bold">Priority tier: </span>
+                {priorityTiers &&
+                  priorityTiers.map((x: any, i: any) => (
+                    <span key={i}>{(i > 0 ? " | " : "") + x.priorityDescription}</span>
                 ))}
               </p>
             </>

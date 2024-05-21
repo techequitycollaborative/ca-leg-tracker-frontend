@@ -12,8 +12,8 @@ import { billDetails, BillDetails } from "@/infrastructure/drizzle/schema/bill-d
 import { orgPosition, OrgPosition } from "@/infrastructure/drizzle/schema/org-position";
 import { billIssue, BillIssue } from "@/infrastructure/drizzle/schema/bill-issue";
 import { issue, Issue } from "@/infrastructure/drizzle/schema/issue";
-import { billCommunitySponsor, BillCommunitySponsor } from "@/infrastructure/drizzle/schema/bill-community-sponsor";
-import { communityOrg, CommunityOrg } from "@/infrastructure/drizzle/schema/community-org";
+import { billPriority, BillPriority } from "@/infrastructure/drizzle/schema/bill-priority";
+import { priorityTier, PriorityTier } from "@/infrastructure/drizzle/schema/priority-tier";
 import { legislator, Legislator } from "@/infrastructure/drizzle/schema/legislator";
 import { committee, Committee } from "@/infrastructure/drizzle/schema/committee";
 import { chamberVoteResult, ChamberVoteResult } from "@/infrastructure/drizzle/schema/chamber-vote-result";
@@ -285,13 +285,13 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
       return itemsData
     }
 
-    public async getBillCommunitySponsors(billId: number, dashboardId: number): Promise<CommunityOrg[] | null> {
+    public async getBillPriorityTier(billId: number, dashboardId: number): Promise<PriorityDescription[] | null> {
       const itemsData = (await db
-        .select({communityOrgId: communityOrg.communityOrgId, communityOrgName: communityOrg.communityOrgName})
-        .from(billCommunitySponsor)
-        .innerJoin(billDetails, eq(billCommunitySponsor.billDetailsId, billDetails.billDetailsId))
+        .select({priorityId: priorityTier.priorityId, priorityDescription: priorityTier.priorityDescription})
+        .from(billPriority)
+        .innerJoin(billDetails, eq(billPriority.billDetailsId, billDetails.billDetailsId))
         .innerJoin(billDashboard, eq(billDashboard.billDashboardId, billDetails.billDashboardId))
-        .innerJoin(communityOrg, eq(communityOrg.communityOrgId, billCommunitySponsor.communityOrgId))
+        .innerJoin(priorityTier, eq(priorityTier.priorityId, billPriority.priorityTierId))
         .where(and(eq(billDashboard.dashboardId, dashboardId), eq(billDashboard.billId, billId)))
         .catch((e) => {
           console.log(e);
@@ -409,12 +409,14 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
     public async saveBillDetails(
       billDetailsId: number,
       alternateName: string,
-      policyNotes: string,
-      orgPositionId: number | null,
+      assignedUserId: number | null,
       issueId: number | null,
-      communityOrgId: number | null,
+      orgPositionId: number | null,
+      priorityId: number | null,
+      communitySponsor: string,
+      coalition: string,
       politicalIntel: string,
-      assignedUserId: number | null
+      policyNotes: string
     ) {
       // Update the bill details.
       // Assumes a bill detail object has been created for any bill added to this dashboard.
@@ -434,45 +436,47 @@ import { desc, eq, gt, sql, and, or, ilike } from 'drizzle-orm';
         .update(billDetails)
         .set({
           alternateName: alternateName,
-          policyNotes: policyNotes,
+          assignedUserId: assignedUserId,
           orgPositionId: orgPositionId,
+          communitySponsor: communitySponsor,
+          coalition: coalition,
           politicalIntel: politicalIntel,
-          assignedUserId: assignedUserId
+          policyNotes: policyNotes
         })
         .where(eq(billDetails.billDetailsId, billDetailsId));
 
       // Community sponsor left blank: delete from table if row already exists
-      if (communityOrgId == null) {
+      if (priorityId == null) {
         await db
-          .delete(billCommunitySponsor)
-          .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
+          .delete(billPriority)
+          .where(eq(billPriority.billDetailsId, billDetailsId))
           .catch((e) => {
             console.log(e);
           }) as any;
       }
       else {
         // Check if a community sponsor row exists. If so, update; else create.
-        const existingCommunitySponsor = (await db
+        const existingPriorityTier = (await db
           .select()
-          .from(billCommunitySponsor)
-          .where(eq(billCommunitySponsor.billDetailsId, billDetailsId))
+          .from(billPriority)
+          .where(eq(billPriority.billDetailsId, billDetailsId))
           .catch((e) => {
             console.log(e);
           })) as any;
 
-        if (!existingCommunitySponsor || existingCommunitySponsor.length < 1) {
-          await db.insert(billCommunitySponsor).values({
+        if (!existingPriorityTier || existingPriorityTier.length < 1) {
+          await db.insert(billPriority).values({
             billDetailsId: billDetailsId,
-            communityOrgId: communityOrgId
+            priorityId: priorityId
           } as any);
         }
         else {
           await db
-            .update(billCommunitySponsor)
+            .update(billPriority)
             .set({
-              communityOrgId: communityOrgId
+              priorityId: priorityId
             })
-            .where(eq(billCommunitySponsor.billCommunitySponsorId, existingCommunitySponsor[0].billCommunitySponsorId))
+            .where(eq(billPriority.billPriorityId, existingPriorityTier[0].billPriorityId))
         }
       }
 

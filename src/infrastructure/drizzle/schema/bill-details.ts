@@ -14,10 +14,13 @@ export const billDetails = dbSchema.table(
         billDetailsId: integer('bill_details_id').primaryKey(),
         billDashboardId: integer('bill_dashboard_id'),
         alternateName: text('alternate_name'),
-        policyNotes: text('policy_notes'),
-        orgPositionId: integer('org_position_id'),
-        politicalIntel: text('political_intel'),
         assignedUserId: integer('assigned_user_id'),
+        orgPositionId: integer('org_position_id'),
+        communitySponsor: text('community_sponsor'),
+        coalition: text('coalition'),
+        politicalIntel: text('political_intel'),
+        policyNotes: text('policy_notes'),
+
     }
 )
 
