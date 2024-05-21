@@ -1,7 +1,7 @@
 import { BillRepository } from "./drizzle/bill.repository";
 import { DashboardRepository } from "./drizzle/dashboard.repository";
 import { CommitteeRepository } from "./drizzle/committee.repository";
-import { CommunityOrgRepository } from "./drizzle/communityorg.repository";
+import { PriorityTierRepository } from "./drizzle/prioritytier.repository";
 import { IssueRepository } from "./drizzle/issue.repository";
 import { LegislatorRepository } from "./drizzle/legislator.repository";
 import { OrgPositionRepository } from "./drizzle/orgposition.repository";
@@ -13,7 +13,7 @@ import { UserActionStatusRepository } from "./drizzle/useractionstatus.repositor
 export const repositories = {
     billRepository: new BillRepository(),
     committeeRepository: new CommitteeRepository(),
-    communityOrgRepository: new CommunityOrgRepository(),
+    priorityTierRepository: new PriorityTierRepository(),
     dashboardRepository: new DashboardRepository(),
     issueRepository: new IssueRepository(),
     legislatorRepository: new LegislatorRepository(),

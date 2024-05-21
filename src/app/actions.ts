@@ -14,25 +14,28 @@ export async function saveDiscussionComment(formData: FormData) {
 }
 
 export async function saveBillDetails(formData: FormData) {
-  const orgPositionData = parseInt(formData.get('orgPosition') as string);
-  const platformAreaData = parseInt(formData.get('platformArea') as string);
-  const communitySponsorData = parseInt(formData.get('communitySponsor') as string);
   const assignedUserData = parseInt(formData.get('assignedUser') as string);
-
-  const orgPositionId = isNaN(orgPositionData) ? null : orgPositionData;
-  const issueId = isNaN(platformAreaData) ? null : platformAreaData;
-  const communityOrgId = isNaN(communitySponsorData) ? null : communitySponsorData;
+  const platformAreaData = parseInt(formData.get('platformArea') as string);
+  const orgPositionData = parseInt(formData.get('orgPosition') as string);
+  const priorityTierData = parseInt(formData.get('priorityTier') as string);
   const userId = isNaN(assignedUserData) ? null : assignedUserData;
+  const issueId = isNaN(platformAreaData) ? null : platformAreaData;
+  const orgPositionId = isNaN(orgPositionData) ? null : orgPositionData;
+  const priorityId = isNaN(priorityTierData) ? null : priorityTierData;
+
 
   await repositories.billRepository.saveBillDetails(
     parseInt(formData.get('billDetailsId') as string),
     formData.get('alternateName') as string,
-    formData.get('policyNotes') as string,
-    orgPositionId,
+    userId,
     issueId,
-    communityOrgId,
+    orgPositionId,
+    priorityId,
+    formData.get('communitySponsor') as string,
+    formData.get('coalition') as string,
     formData.get('politicalIntel') as string,
-    userId
+    formData.get('policyNotes') as string
+
   );
 }
 

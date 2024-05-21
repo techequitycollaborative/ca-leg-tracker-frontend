@@ -41,10 +41,13 @@ import { eq, and } from 'drizzle-orm';
         await db.insert(billDetails).values({
           billDashboardId: billDashboardInsert[0].billDashboardId,
           alternateName: null,
-          policyNotes: null,
+          assignedUserId: null,
           orgPositionId: null,
+          communitySponsor: null,
+          coalition: null,
           politicalIntel: null,
-          assignedUserId: null
+          policyNotes: null
+
         } as any);
       }
       else {

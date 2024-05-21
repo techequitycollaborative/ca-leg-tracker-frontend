@@ -7,30 +7,34 @@ export default function BillDetails({
   billDetails,
   positionId,
   issueId,
-  sponsorId,
+  priorityId,
   assignedUserId,
   positionList,
   issueList,
-  sponsorList,
+  priorityTierList,
   userList
 } : any) {
   const [displayModal, setDisplayModal] = useState(false);
   const [alternateName, setAlternateName] = useState("");
-  const [policyNotes, setPolicyNotes] = useState("");
-  const [orgPosition, setOrgPosition] = useState(0);
-  const [platformArea, setPlatformArea] = useState(0);
-  const [communitySponsor, setCommunitySponsor] = useState(0);
-  const [politicalIntel, setPoliticalIntel] = useState("");
   const [assignedTo, setAssignedTo] = useState(0);
+  const [platformArea, setPlatformArea] = useState(0);
+  const [orgPosition, setOrgPosition] = useState(0);
+  const [priorityTier, setPriorityTier] = useState(0);
+  const [communitySponsor, setCommunitySponsor] = useState("");
+  const [coalition, setCoalition] = useState("");
+  const [politicalIntel, setPoliticalIntel] = useState("");
+  const [policyNotes, setPolicyNotes] = useState("");
 
   function resetValues() {
     setAlternateName(billDetails?.alternateName);
-    setPolicyNotes(billDetails?.policyNotes);
-    setOrgPosition(positionId);
-    setPlatformArea(issueId);
-    setCommunitySponsor(sponsorId);
-    setPoliticalIntel(billDetails?.politicalIntel);
     setAssignedTo(assignedUserId);
+    setPlatformArea(issueId);
+    setOrgPosition(positionId);
+    setPriorityTier(priorityId);
+    setCommunitySponsor(billDetails?.communitySponsor);
+    setCoalition(billDetails?.coalition);
+    setPoliticalIntel(billDetails?.politicalIntel);
+    setPolicyNotes(billDetails?.policyNotes);
   }
 
   function toggleModal() {
@@ -65,14 +69,33 @@ export default function BillDetails({
               onChange={e => handleInputChange(e, setAlternateName)} value={alternateName}
             />
 
-            <p className="w-1/3 font-bold mb-2">Policy notes:</p>
-            <input
-              className="w-2/3 mb-2 pl-1"
-              id="policyNotes"
-              name="policyNotes"
-              type="text"
-              onChange={e => handleInputChange(e, setPolicyNotes)} value={policyNotes}
-            />
+            <p className="w-1/3 font-bold mb-2">Assigned to:</p>
+            <select
+              className="w-2/3 mb-2"
+              id="assignedUser"
+              name="assignedUser"
+              value={assignedTo}
+              onChange={e => handleInputChange(e, setAssignedTo)}
+            >
+              <option value={undefined}></option>
+              {userList.map((x: any, i: any) => (
+                  <option key={i} value={x.userId}>{x.userName}</option>
+              ))}
+            </select>
+
+            <p className="w-1/3 font-bold mb-2">Issue area:</p>
+            <select
+              className="w-2/3 mb-2"
+              id="platformArea"
+              name="platformArea"
+              value={platformArea}
+              onChange={e => handleInputChange(e, setPlatformArea)}
+            >
+              <option value={undefined}></option>
+              {issueList.map((x: any, i: any) => (
+                  <option key={i} value={x.issueId}>{x.issueName}</option>
+              ))}
+            </select>
 
             <p className="w-1/3 font-bold mb-2">Org position:</p>
             <select
@@ -88,33 +111,37 @@ export default function BillDetails({
               ))}
             </select>
 
-            <p className="w-1/3 font-bold mb-2">Platform area:</p>
+            <p className="w-1/3 font-bold mb-2">Priority tier:</p>
             <select
               className="w-2/3 mb-2"
-              id="platformArea"
-              name="platformArea"
-              value={platformArea}
-              onChange={e => handleInputChange(e, setPlatformArea)}
+              id="priorityTier"
+              name="priorityTier"
+              value={priorityTier}
+              onChange={e => handleInputChange(e, setPriorityTier)}
             >
               <option value={undefined}></option>
-              {issueList.map((x: any, i: any) => (
-                  <option key={i} value={x.issueId}>{x.issueName}</option>
+              {priorityTierList.map((x: any, i: any) => (
+                  <option key={i} value={x.priorityId}>{x.priorityDescription}</option>
               ))}
             </select>
 
             <p className="w-1/3 font-bold mb-2">Community sponsor:</p>
-            <select
-              className="w-2/3 mb-2"
+            <input
+              className="w-2/3 mb-2 pl-1"
               id="communitySponsor"
               name="communitySponsor"
-              value={communitySponsor}
-              onChange={e => handleInputChange(e, setCommunitySponsor)}
-            >
-              <option value={undefined}></option>
-              {sponsorList.map((x: any, i: any) => (
-                  <option key={i} value={x.communityOrgId}>{x.communityOrgName}</option>
-              ))}
-            </select>
+              type="text"
+              onChange={e => handleInputChange(e, setCommunitySponsor)} value={communitySponsor}
+            />
+
+            <p className="w-1/3 font-bold mb-2">Coalition:</p>
+            <input
+              className="w-2/3 mb-2 pl-1"
+              id="coalition"
+              name="coalition"
+              type="text"
+              onChange={e => handleInputChange(e, setCoalition)} value={coalition}
+            />
 
             <p className="w-1/3 font-bold mb-2">Political intel:</p>
             <input
@@ -125,19 +152,15 @@ export default function BillDetails({
               onChange={e => handleInputChange(e, setPoliticalIntel)} value={politicalIntel}
             />
 
-            <p className="w-1/3 font-bold mb-2">Assigned to:</p>
-            <select
-              className="w-2/3 mb-2"
-              id="assignedUser"
-              name="assignedUser"
-              value={assignedTo}
-              onChange={e => handleInputChange(e, setAssignedTo)}
-            >
-              <option value={undefined}></option>
-              {userList.map((x: any, i: any) => (
-                  <option key={i} value={x.userId}>{x.userName}</option>
-              ))}
-            </select>
+            <p className="w-1/3 font-bold mb-2">Policy notes:</p>
+            <input
+              className="w-2/3 mb-2 pl-1"
+              id="policyNotes"
+              name="policyNotes"
+              type="text"
+              onChange={e => handleInputChange(e, setPolicyNotes)} value={policyNotes}
+            />
+
           </div>
           <div>
             <div className="my-4 w-full border-b border-gray-500"></div>
