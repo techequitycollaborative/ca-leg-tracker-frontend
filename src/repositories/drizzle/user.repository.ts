@@ -18,9 +18,9 @@ import { db } from "@/infrastructure/drizzle";
           .from(user)
           .orderBy(user.userName)
           .catch((e) => {
+            // TODO: crash the program here or at least make the logging clearer
             console.log(e);
           })) as User[] | null;
-
         if (!itemsData || itemsData.length < 1) {
           return null;
         }
