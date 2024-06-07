@@ -29,7 +29,7 @@ const Page = async ({}) => {
                   billLastAction={x.billLatest.userText}
                   billPosition={x.orgPosition?.orgPositionName}
                   billLink={x.bill.leginfoLink}
-                  billAssignedTo={x.assignedUser.userName}
+                  billAssignedTo={x.assignedUser.userName == null ? "none": x.assignedUser.userName}
                   billSession={x.bill.legSession}
                   //billIssue="placeholder"
                   billRemove={removeBillFromDashboard}
