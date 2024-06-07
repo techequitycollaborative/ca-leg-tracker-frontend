@@ -66,7 +66,9 @@ export default function BillDetails({
               id="alternateName"
               name="alternateName"
               type="text"
-              onChange={e => handleInputChange(e, setAlternateName)} value={alternateName}
+              value={alternateName}
+              onChange={e => handleInputChange(e, setAlternateName)} 
+              
             />
 
             <p className="w-1/3 font-bold mb-2">Assigned to:</p>

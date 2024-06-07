@@ -7,9 +7,9 @@ import { removeBillFromDashboard } from 'app/actions';
 import { getDashboard } from 'lib/session';
 
 const Page = async ({}) => {
-  const dashboard = await getDashboard();
-  const bills = await repositories.billRepository.listEnrichedBills(dashboard.dashboardId);
-
+      const dashboard = await getDashboard();
+      const bills = await repositories.billRepository.listEnrichedBills(dashboard.dashboardId);
+      
   return (
     <>
       <div>
@@ -27,9 +27,11 @@ const Page = async ({}) => {
                   billLatest={x.billLatest.lastText}
                   billUpcoming={x.billLatest.nextText}
                   billLastAction={x.billLatest.userText}
-                  billSession={x.bill.legSession}
                   billPosition={x.orgPosition?.orgPositionName}
                   billLink={x.bill.leginfoLink}
+                  billAssignedTo={x.assignedUser.userName}
+                  billSession={x.bill.legSession}
+                  //billIssue="placeholder"
                   billRemove={removeBillFromDashboard}
                 />
               </div>
