@@ -1,3 +1,8 @@
+# ca-leg-tracker-frontend
+
+⚠️ _NOTE: This repository is no longer under active development. The content represents v1 efforts to develop a legislation tracker by TechEquity's Civic Tech volunteer team._ ⚠️
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
